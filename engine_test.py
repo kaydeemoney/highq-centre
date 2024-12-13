@@ -549,9 +549,11 @@ def notification():
     for specifics in std_details:
         specifics_fullname = specifics.firstname + " " + specifics.surname
         student_full.append(specifics_fullname)
-    with open("static/data.json", "w") as json_file:
-        json.dump(student_full, json_file)
-    return render_template('notification.html') 
+    print ("this is the revised list")
+    print(student_full)
+    for name in student_full:
+        print(name)
+    return "thanks for checking"  
     
    
 if __name__=='__main__':
