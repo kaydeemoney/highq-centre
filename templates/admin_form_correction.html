@@ -1,0 +1,59 @@
+{% extends "admin_base.html" %}
+
+{% block content %}
+
+    <div class="admin-upload-container">
+        <h1>Project Upload</h1>
+
+        <a  href="{{ url_for('admin_project_upload_page') }}">
+            
+            <button class="back_upload_btn">Back To Project Upload Menu</button>
+        </a>
+
+        <a  href="{{ url_for('admin_edit_current' , project_id=request.args.get('project_id')) }}">
+            <button class="edit_btn">Make Edits in Topic</button>
+        </a>
+
+
+        <form method="POST" action="{{ url_for('admin_submit_correction', project_id=request.args.get('project_id'),
+        bad_id=request.args.get('bad_id')) }}">
+            {{ form.hidden_tag() }}
+            
+            <h2>    </h2>
+            
+            <div class="form-group">
+                <label for="question">{{ form.question.label }}</label>
+                {{ form.question(class="form-control", value=question_to_edit.question) }}
+            </div>
+            
+            <div class="form-group">
+                <label for="opt_a">{{ form.opt_a.label }}</label>
+                {{ form.opt_a(class="form-control", value=question_to_edit.opt_a) }}
+            </div>
+
+            <div class="form-group">
+                <label for="opt_b">{{ form.opt_b.label }}</label>
+                {{ form.opt_b(class="form-control", value=question_to_edit.opt_b) }}
+            </div>
+
+            <div class="form-group">
+                <label for="opt_c">{{ form.opt_c.label }}</label>
+                {{ form.opt_c(class="form-control", value=question_to_edit.opt_c) }}
+            </div>
+
+            <div class="form-group">
+                <label for="opt_d">{{ form.opt_d.label }}</label>
+                {{ form.opt_d(class="form-control", value=question_to_edit.opt_d) }}
+            </div>
+
+            <div class="form-group">
+                <label for="answer">{{ form.answer.label }}</label>
+                {{ form.answer(class="form-control", value=question_to_edit.answer) }}
+            </div>
+
+            <div class="form-group">
+                {{ form.submit(class="btn btn-primary") }}
+            </div>
+        </form>
+    </div>
+{% endblock %}

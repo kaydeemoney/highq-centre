@@ -1,0 +1,74 @@
+{% extends "admin_base.html" %}
+{% block content %}
+    <div class="admin-upload-container">
+        <h1>Project Upload</h1>
+
+        <!-- Flash Messages -->
+        <div>
+            {% with messages=get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+            {% endwith %}
+        </div>
+
+        <form method="post" enctype="multipart/form-data">
+            {{ form.hidden_tag() }}  <!-- Add the CSRF token -->
+            
+            <!-- Course Enrolled Dropdown -->
+            <div class="form-group">
+                {{ form.course_enrolled.label }}
+                {% if form.course_enrolled.errors %}
+                    {{ form.course_enrolled(class="form-control is-invalid") }}
+                    <div class="invalid-feedback">
+                        {% for error in form.course_enrolled.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.course_enrolled(class="form-control") }}
+                {% endif %}
+            </div>
+
+            <!-- Project Title -->
+            <div class="form-group">
+                {{ form.project_title.label }}
+                {% if form.project_title.errors %}
+                    {{ form.project_title(class="form-control is-invalid") }}
+                    <div class="invalid-feedback">
+                        {% for error in form.project_title.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.project_title(class="form-control") }}
+                {% endif %}
+            </div>
+
+            <!-- Deadline -->
+            <div class="form-group">
+                {{ form.deadline.label }}
+                {% if form.deadline.errors %}
+                    {{ form.deadline(class="form-control is-invalid") }}
+                    <div class="invalid-feedback">
+                        {% for error in form.deadline.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.deadline(class="form-control") }}
+                {% endif %}
+            </div>
+
+            <!-- Objective and Theory Buttons -->
+            <div class="form-group">
+                {{ form.submit_objective(class="btn btn-primary") }}
+                {{ form.submit_theory(class="btn btn-secondary") }}
+            </div>
+        </form>
+    </div>
+{% endblock %}

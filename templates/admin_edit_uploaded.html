@@ -1,0 +1,56 @@
+{% extends "admin_base.html" %}
+
+{% block content %}
+
+
+
+<div class="admin-upload-container2">
+
+    <a  href="{{ url_for('admin_project_upload_page') }}">
+            
+        <button class="back_upload_btn">Back To Project Upload Menu</button>
+    </a>
+
+    <br/> <br/>
+<section class="students-management">
+    <h2>Uploaded Projects</h2>
+    <table class="students-table">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Course</th>
+                <th>Date Created</th>
+                <th>Deadline</th>
+                <th>Type</th>
+                <th>Wipe</th>
+                <th>Edit</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for question in uploaded_project %}
+            <tr>
+                <td>{{ question.title }}</td>
+                <td>{{ question.course_enrolled }}</td>
+                <td>{{ question.date_created[:10] }}</td>
+                <td>{{ question.deadline }}</td>
+                <td>{{ question.project_type }}</td>
+                <td>
+                   <a href="{{ url_for('admin_edit_current',  project_id=question.project_id) }}">
+                        <button class="btn">Edit</button>
+                    </a>
+                </td>
+                <td>
+                    <a href="{{ url_for('admin_delete_full', project_id=question.project_id) }}">
+                        <button class="btn">Delete</button>
+                    </a>
+                </td>
+            </tr>
+
+            {% endfor %}
+            
+        </tbody>
+    </table>
+</section>
+
+{% endblock content %}
+

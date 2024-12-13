@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+
+<article>
+    <h1>Facebook Marketing FAQ</h1>
+
+    <section class="faq">
+        <h2>What is Facebook Marketing and why is it important?</h2>
+        <p>
+            Facebook Marketing refers to using Facebook’s platform to promote products, services, or brands. With over 2.8 billion monthly active users, it offers a massive audience for businesses to increase their visibility.
+        </p>
+    </section>
+
+    <section class="faq">
+        <h2>What will I learn in this Facebook Marketing course?</h2>
+        <p>
+            This 3-month course covers optimizing Facebook advertisements with AI, running search, conversion, and display ads, and using Facebook Marketplace for product sales.
+        </p>
+    </section>
+
+    <section class="faq">
+        <h2>How is this course structured to help me succeed?</h2>
+        <p>
+            It’s self-paced, allowing students to learn at their own speed while completing assignments before deadlines.
+        </p>
+    </section>
+
+    <section class="faq">
+        <h2>Are there partnership opportunities after this course?</h2>
+        <p>
+            Yes, after two months, you can partner with LearnSocx to apply your skills and start earning with real-world projects.
+        </p>
+    </section>
+
+    <section class="faq">
+        <h2>What are the requirements to join this course?</h2>
+        <p>
+            Basic computer knowledge, internet, and electricity are all you need to start. By the end, you’ll be equipped with the skills to run successful ad campaigns.
+        </p>
+    </section>
+
+    <a href="{{ url_for('student_reg_page') }}">
+        <button class="register-button">Register Now!</button>
+            </a>
+</article>
+
+{% endblock content %}

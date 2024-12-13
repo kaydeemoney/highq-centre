@@ -1,0 +1,48 @@
+{% extends "student_dashboard_base.html" %}
+
+
+{% block content %}
+
+
+
+    <section class="profile-section">
+        <div class="profile-info">
+        
+            <h1>{{ firstname }} {{ surname }} </h1>
+            <p>Current Average Score: <span id="average-score">85%</span></p>
+            <p>Status: {{ student_status }}</p>
+        </div>
+    </section>
+
+    <section class="weekly-scores">
+        <h2>Your Performance</h2>
+        <div class="scores-grid">
+            <div class="week">
+                <p>Multiple Choice</p>
+                <p class="score">85%</p>
+            </div>
+            <div class="week">
+                <p>Theory</p>
+                <p class="score">78%</p>
+            </div>
+            <div class="week">
+                <p>Social Media Tasks</p>
+                <p class="score">90%</p>
+            </div>
+            <!-- Add weeks up to Week 12 similarly -->
+        </div>
+    </section>
+
+    <section class="assignments">
+        <h2>Current Projects</h2>
+        <ul>
+            <li>Assignment 1: Due 25th Sept</li>
+            <li>Assignment 2: Due 1st Oct</li>
+        </ul>
+    </section>
+
+
+
+
+{% endblock %}
+

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LearnSocX Landing Page</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <header>
+       
+        <nav class="horizontal-navbar">
+            <ul >
+                <li>
+                    <div class="logo">
+                        <img src="{{ url_for('static', filename='images/socxlogo.png') }}" alt="Logo">
+                        
+                    </div>
+                </li>
+                <li>
+                    <div class="header-content">
+                        <h3>LEARNSOCX</h3>
+
+                    </div> 
+                </li>
+
+                <li><a href="/">Courses</a></li>
+                <li><a href="/employer_register">Partnerships</a></li>
+                <li><a href="/seeker_register">Frequently Asked Questions</a></li>
+                
+                <li><a href="/job_match">Coming Soon!</a></li>
+                <li><a href="/about_us">About Us</a></li>
+                <li><a href="/about_us">Sign In</a></li>
+                
+            </ul>
+        </nav>
+    </header>
+    
+    <main>
+        <div class="header-text">
+            <h1>GET TRENDING INFORMATION MARKETING SKILLS</h1>
+            <h1 style="color:blue;">...totally free of charge</h1>
+        </div>
+
+        {% block content %}
+
+        {% endblock content %}
+
+        
+    </main>
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-logo">
+                <h2>LearnSocx</h2>
+                <p>Your Gateway to Social Media Marketing Mastery</p>
+            </div>
+            <div class="footer-links">
+                <ul>
+                    <li><a href="#">About Us</a></li>
+                    <li><a href="#">Courses</a></li>
+                    <li><a href="#">Partners</a></li>
+                    <li><a href="#">Contact</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                </ul>
+            </div>
+            <div class="footer-social">
+                <a href="#">Facebook</a> |
+                <a href="#">Instagram</a> |
+                <a href="#">Twitter</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 LearnSocx. All rights reserved.</p>
+        </div>
+    </footer>
+    <script src="script.js"></script>
+</body>
+</html>

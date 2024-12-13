@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+        <div style="margin-top:5%;" class="header-text">
+            <a href="{{ url_for('student_reg_page') }}"><button class="btn">Get Started</button></a>
+            <a href="{{ url_for('general_login_page') }}"><button class="btn">Login</button></a>
+            
+        </div>
+
+
+        <div class="containers">
+            <div class="left">
+                <img src="{{ url_for('static', filename='images/real_display_pic.png') }}" alt="Placeholder Image">
+            </div>
+            <div class="right">
+                <h1>Welcome to LearnSocx</h1>
+                <b><i>
+                <p>Your free, all-in-one platform for mastering social media marketing! Whether you’re a beginner or looking to sharpen your skills, we offer expert-led courses in Facebook, Instagram, Twitter, Video, and Email Marketing. Our goal is to help you thrive in today’s digital landscape, completely free of charge.
+                </p> 
+
+                <br/>
+                
+                <p>At LearnSocx, you’ll dive into practical lessons designed to teach you how to grow your audience, create engaging content, and boost your brand. And the best part? You can earn financial rewards by partnering with us and sharing LearnSocx with others. It’s a win-win—learn valuable skills while benefiting financially!</p> 
+                <br/>
+                <p>Our flexible, online courses allow you to learn at your own pace, anytime, anywhere. Plus, you’ll join a supportive community of learners, where you can share ideas and ask questions. Whether you want to start a career in social media marketing or simply grow your brand, LearnSocx is here to guide you every step of the way.</p>
+                </i></b>
+            </div>
+        </div>
+
+
+
+        <div class="header-text" style="margin-top:3%;" >
+            <h4>You can learn a valuable skill so far you are willing to give it a try!</h4>
+
+
+            <h2 style="margin-top: 5%; margin-bottom: 5%; color:red;">A LITTLE ABOUT SOME OF THE COURSES WE OFFER:</h2>
+        </div>
+
+        
+
+        <div class="x">
+            <div class="y">
+                <div class="image">
+                    <img src="{{ url_for('static', filename='images/Facebook marketing.png') }}" alt="Image description">
+                    
+                    
+                </div>
+                <div class="text">
+                    <p><b>Facebook Marketing</b>
+                        <br/>
+                        
+                        Facebook marketing thrives on targeting the right audience through demographic insights, engaging content, and consistent interaction. Use Facebook Ads to reach specific groups, combine posts with eye-catching visuals, 
+                        and encourage conversations through comments and shares to increase visibility and strengthen brand loyalty.</p>
+                        <a href="{{ url_for('fb_info') }}">
+                            <button class="view_land_page-button" >View</button>
+                        </a>
+                </div>
+            </div>
+            <div class="y">
+                <div class="image">
+                    <img src="{{ url_for('static', filename='images/video marketing.png') }}" alt="Image description">
+                    
+                </div>
+                <div class="text">
+                    <p><b>Video Marketing</b>
+                        <br/>
+                        Video marketing involves creating engaging, informative, or entertaining videos to connect with audiences. Use platforms like YouTube, social media, or websites to showcase products, services, or brand stories. Videos boost 
+                        conversion rates, improve brand recall, and are highly shareable, making them effective for audience growth.</p>
+                        <a href="{{ url_for('video_info') }}">
+                            <button class="view_land_page-button" >View</button>
+                        </a>
+                </div>
+            </div>
+            <div class="y">
+                <div class="image">
+                    <img src="{{ url_for('static', filename='images/Instagram marketing.png') }}" alt="Image description">
+                    
+                </div>
+                <div class="text">
+                    <p><b>Instagram Marketing</b>
+                        <br/>
+                        Instagram marketing focuses on visually appealing content through posts, stories, and reels. Leverage the platform’s image-centric nature by sharing high-quality photos, videos, and influencer collaborations. Using hashtags, 
+                        engaging with followers, and utilizing Instagram Ads helps boost reach and improve brand awareness.
+                    <br/>. </p>
+                    <a href="{{ url_for('ig_info') }}">
+                        <button class="view_land_page-button" >View</button>
+                    </a>
+                </div>
+            </div>
+            <div class="y">
+                <div class="image">
+                    <img src="{{ url_for('static', filename='images/Twitter marketing.png') }}" alt="Image description">
+                    
+                </div>
+                <div class="text">
+                    <p><b>Twitter Marketing</b>
+                        <br/>
+                        Twitter marketing emphasizes real-time engagement and concise communication. By regularly tweeting relevant content, engaging in trending topics, and responding promptly to followers, brands can build an active 
+                        community. Utilize hashtags and Twitter Ads to increase reach and influence within specific niche audiences.</p>
+                        
+                        <a href="{{ url_for('twitter_info') }}">
+                            <button class="view_land_page-button" >View</button>
+                        </a>
+                </div>
+            </div>
+            <div class="y">
+                <div class="image">
+                    <img src="{{ url_for('static', filename='images/email.png') }}" alt="Image description">
+
+                    
+                </div>
+                <div class="text">
+                    <p><b>Email Marketing</b>
+                        <br/>
+                        Email marketing targets specific audiences through personalized messages, promotions, and newsletters. With segmented email lists, brands can share updates, offers, and valuable content directly to users' inboxes.
+                         It’s a cost-effective way to nurture leads, maintain customer relationships, and drive conversions.</p>
+                         <br/>.
+                         <a href="{{ url_for('email_info') }}">
+                            <button class="view_land_page-button" >View</button>
+                        </a>
+                </div>
+            </div>
+        </div>
+
+        
+    {% endblock content %}

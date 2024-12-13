@@ -1,0 +1,116 @@
+{% extends "admin_base.html" %}
+
+{% block content %}
+
+        <section class="admin-overview">
+            <h2>Admin Overview</h2>
+            <div class="overview-grid">
+                <div class="overview-card">
+                    <h3>Total Students</h3>
+                    <p>{{ headcount }}</p>
+
+<br/><br/>
+                    <h3 style="color:red;">Active Courses</h3>
+                    <p style="color:red;">4</p>
+                   
+                </div>
+                <div class="overview-card">
+                    <h3>Admin Actions</h3>
+                    <br/>
+                    <a href="{{ url_for('admin_project_upload_page') }}">
+                        <button class="btn">Post Notifications</button>
+                    </a>
+
+                    <P>
+                    <br/>
+                    <a href="{{ url_for('admin_edit_uploaded') }}">
+                        <button class="btn">Mark Unmarked Projects</button>
+                    </a>
+                    </P>
+
+                    <p>
+
+                    <br/>
+                    <a href="{{ url_for('admin_edit_uploaded') }}">
+                        <button class="btn">Edit Student Info</button>
+                    </a>
+                    </p>
+                </div>
+
+
+
+
+
+
+                <div class="overview-card">
+                    <h3>PROJECT</h3>
+                   <br/><br/>
+                    <a href="{{ url_for('admin_project_upload_page') }}">
+                        <button class="btn">Upload New Projects</button>
+                    </a>
+
+                    <P>
+                    <br/>
+                    <a href="{{ url_for('admin_edit_uploaded') }}">
+                        <button class="btn">Check/Edit Uploaded Project</button>
+                    </a>
+                    </P>
+                    
+                </div>
+            </div>
+        </section>
+
+       
+
+
+        <section class="students-management">
+            <h2>Students Management</h2>
+            <table class="students-table">
+                <thead>
+                    <tr>
+                        <th>Student Name</th>
+                        <th>Email</th>
+                        <th>Average Score</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>John Doe</td>
+                        <td>johndoe@example.com</td>
+                        <td>85%</td>
+                        <td>Active</td>
+                        <td><button class="btn">Grade</button></td>
+                    </tr>
+                    <tr>
+                        <td>Jane Smith</td>
+                        <td>janesmith@example.com</td>
+                        <td>78%</td>
+                        <td>Inactive</td>
+                        <td><button class="btn">Grade</button></td>
+                    </tr>
+                    <!-- Add more students as needed -->
+                </tbody>
+            </table>
+        </section>
+
+        <section class="assignments-management">
+            <h2>Assignments Management</h2>
+            <ul class="assignments-list">
+                <li>Assignment 1: HTML Basics - <span class="due-date">Due: 25th Sept</span></li>
+                <li>Assignment 2: CSS Design - <span class="due-date">Due: 1st Oct</span></li>
+                <!-- Add more assignments as needed -->
+            </ul>
+        </section>
+
+        <section class="courses-management">
+            <h2>Courses Management</h2>
+            <ul class="courses-list">
+                <li>HTML & CSS - <span class="status">Active</span></li>
+                <li>JavaScript - <span class="status">Active</span></li>
+                <li>React Native - <span class="status">Upcoming</span></li>
+                <!-- Add more courses as needed -->
+            </ul>
+        </section>
+        {% endblock %}
