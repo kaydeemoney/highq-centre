@@ -1,0 +1,68 @@
+{% extends "admin_base.html" %}
+
+{% block content %}
+
+<section class="students-management">
+    <h2>Students Management</h2>
+    <table class="students-table">
+        <thead>
+            <tr>
+                <th>SurName</th>
+                <th>First Name</th>
+                <th>Second Name</th>
+                <th>Course</th>
+                <th>Status</th>
+                <th>Level</th>
+                <th>View More</th>
+                <th>Delete</th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+            {% for each_student in student_list %}
+
+            
+
+            <tr>
+                <td> {{ each_student.surname }}</td>
+                <td> {{ each_student.firstname }}</td>
+                <td> {{ each_student.secondname }}</td>
+                <td> {{ each_student.course_enrolled }}</td>
+                <td> {{ each_student.status }}</td>
+                <td> {{ each_student.level }}</td>
+               
+                
+                <td>
+                    <a href="{{ url_for('admin_student_edit', student_id=each_student.student_task_id, student_list=student_list, course=each_student.course_enrolled ) }}">
+                        <button class="btn">See Complete Info</button>
+                    </a>
+                </td>
+
+
+                <td>
+                    <a href="{{ url_for('delete_module', student_id=each_student.student_task_id, student_list=student_list, course=each_student.course_enrolled ) }}">
+                        <button class="btn" style="background-color:red;">Delete</button>
+                    </a>
+                </td>
+
+            </tr>
+
+
+
+
+
+
+
+
+
+{% endfor %}
+
+
+</tbody>
+
+</table>
+
+</section>
+
+{% endblock content %}

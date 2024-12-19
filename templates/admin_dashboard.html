@@ -12,12 +12,14 @@
 <br/><br/>
                     <h3 style="color:red;">Active Courses</h3>
                     <p style="color:red;">4</p>
+
+                    
                    
                 </div>
                 <div class="overview-card">
                     <h3>Admin Actions</h3>
                     <br/>
-                    <a href="{{ url_for('admin_project_upload_page') }}">
+                    <a href="{{ url_for('notification') }}">
                         <button class="btn">Post Notifications</button>
                     </a>
 
@@ -31,9 +33,7 @@
                     <p>
 
                     <br/>
-                    <a href="{{ url_for('admin_edit_uploaded') }}">
-                        <button class="btn">Edit Student Info</button>
-                    </a>
+                   
                     </p>
                 </div>
 
@@ -44,7 +44,7 @@
 
                 <div class="overview-card">
                     <h3>PROJECT</h3>
-                   <br/><br/>
+                   <br/>
                     <a href="{{ url_for('admin_project_upload_page') }}">
                         <button class="btn">Upload New Projects</button>
                     </a>
@@ -68,27 +68,56 @@
             <table class="students-table">
                 <thead>
                     <tr>
-                        <th>Student Name</th>
-                        <th>Email</th>
-                        <th>Average Score</th>
-                        <th>Status</th>
-                        <th>Action</th>
+                        <th>Course Name</th>
+                        <th>Student Population</th>
+                       
+                        <th>Edit Student Info</th>
                     </tr>
                 </thead>
                 <tbody>
+
                     <tr>
-                        <td>John Doe</td>
-                        <td>johndoe@example.com</td>
-                        <td>85%</td>
-                        <td>Active</td>
-                        <td><button class="btn">Grade</button></td>
+                        <td>Email Marketing</td>
+                        <td>{{ email_count}}</td>
+                        
+                        <td>
+                            <a href="{{ url_for('admin_student_edit', course='email-marketing') }}">
+                                <button class="btn">View Student Info</button>
+                            </a>
+                        </td>
+
                     </tr>
                     <tr>
-                        <td>Jane Smith</td>
-                        <td>janesmith@example.com</td>
-                        <td>78%</td>
-                        <td>Inactive</td>
-                        <td><button class="btn">Grade</button></td>
+                        <td>Instagram Marketing</td>
+                        <td>{{ insta_count }}</td>
+                        
+                        <td>
+                            <a href="{{ url_for('admin_student_edit', course='instagram-marketing') }}">
+                                <button class="btn">View Student Info</button>
+                            </a>
+                        </td>
+
+                    </tr>
+
+                    <tr></tr>
+                        <td>Facebook Marketing</td>
+                        <td>{{ fb_count }}</td>
+                       
+                        <td>
+                            <a href="{{ url_for('admin_student_edit', course='facebook-marketing') }}">
+                                <button class="btn">View Student Info</button>
+                            </a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Twitter Marketing</td>
+                        <td>{{ twitter_count }}</td>
+                        
+                        <td>
+                            <a href="{{ url_for('admin_student_edit', course='twitter-marketing') }}">
+                                <button class="btn">View Student Info</button>
+                            </a>
+                        </td>
                     </tr>
                     <!-- Add more students as needed -->
                 </tbody>

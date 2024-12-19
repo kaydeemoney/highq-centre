@@ -1,0 +1,195 @@
+File structure:
+
+php
+Copy code
+project/
+│
+├── app.py               # Flask application
+├── templates/
+│   └── index.html       # HTML template
+├── static/
+│   └── uploads/         # Folder to save uploaded images
+└── requirements.txt     # (Optional) File to list dependencies
+Flask application (app.py):
+python
+Copy code
+from flask import Flask, render_template, request, redirect, url_for, flash
+import os
+from werkzeug.utils import secure_filename
+from PIL import Image
+
+app = Flask(__name__)
+
+# Configure the upload folder and allowed extensions
+UPLOAD_FOLDER = 'static/uploads'
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+MAX_CONTENT_LENGTH = 500 * 1024  # 500KB
+
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['MAX_CONTENT_LENGTH'] = MAX_CONTENT_LENGTH
+app.secret_key = 'your_secret_key'  # For flashing messages
+
+# Function to check allowed extensions
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+@app.route('/', methods=['GET', 'POST'])
+def index():
+    if request.method == 'POST':
+        # Check if a file is part of the request
+        if 'file' not in request.files:
+            flash('No file part', 'danger')
+            return redirect(request.url)
+        
+        file = request.files['file']
+        
+        # If no file is selected
+        if file.filename == '':
+            flash('No selected file', 'danger')
+            return redirect(request.url)
+        
+        if file and allowed_file(file.filename):
+            # Secure the filename
+            filename = secure_filename(file.filename)
+            
+            # Save the file
+            filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            file.save(filepath)
+            
+            # Open image and make it round
+            img = Image.open(filepath)
+            img = img.convert("RGBA")  # Ensure it's in RGBA format (with transparency)
+
+            # Create a round mask for the image
+            size = (200, 200)  # Set size of the image
+            img = img.resize(size, Image.ANTIALIAS)
+            mask = Image.new("L", size, 0)
+            draw = ImageDraw.Draw(mask)
+            draw.ellipse((0, 0, size[0], size[1]), fill=255)
+            img.putalpha(mask)
+
+            # Save the round image
+            img.save(filepath)
+
+            flash('Profile picture uploaded successfully', 'success')
+            return render_template('index.html', filename=filename)
+
+        else:
+            flash('File type not allowed or file is too large', 'danger')
+            return redirect(request.url)
+    
+    return render_template('index.html')
+
+if __name__ == '__main__':
+    app.run(debug=True)
+HTML Template (templates/index.html):
+html
+Copy code
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile Picture Upload</title>
+    <style>
+        .profile-img {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        .container {
+            text-align: center;
+            margin-top: 50px;
+        }
+        .form-container {
+            margin-top: 30px;
+        }
+        .alert {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            border-radius: 5px;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Upload Profile Picture</h1>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert {{ category }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    {% if filename %}
+        <div>
+            <h3>Your Profile Picture:</h3>
+            <img src="{{ url_for('static', filename='uploads/' + filename) }}" class="profile-img" alt="Profile Picture">
+        </div>
+    {% endif %}
+
+    <div class="form-container">
+        <form method="POST" enctype="multipart/form-data">
+            <input type="file" name="file" required>
+            <button type="submit">Upload</button>
+        </form>
+    </div>
+</div>
+
+</body>
+</html>
+Folder Structure:
+Ensure your project has the following folder structure:
+
+php
+Copy code
+project/
+│
+├── app.py
+├── templates/
+│   └── index.html
+├── static/
+│   └── uploads/   # This is where the uploaded images will be stored
+└── requirements.txt
+Explanation:
+App Configuration:
+
+The UPLOAD_FOLDER specifies where to store the uploaded images.
+The ALLOWED_EXTENSIONS restricts the uploaded files to image formats (.png, .jpg, .jpeg, .gif).
+MAX_CONTENT_LENGTH limits file uploads to 500KB.
+Upload Handling:
+
+The file is checked to ensure it is valid and not too large.
+If valid, the file is saved to the static/uploads folder, and Pillow is used to crop it into a round shape (using an alpha mask).
+HTML Template:
+
+Displays an upload form and, once an image is uploaded, shows it in a round frame.
+Flash messages notify the user of the success or failure of the upload.
+Running the Application:
+Make sure the necessary packages are installed:
+Copy code
+pip install flask pillow
+Run the Flask application:
+Copy code
+python app.py
+Open your browser and go to http://127.0.0.1:5000/ to upload and view the profile picture.
+This should meet the requirements of uploading, saving, displaying an image in a round frame, and restricting the image size.
+
+
+
+
+
+

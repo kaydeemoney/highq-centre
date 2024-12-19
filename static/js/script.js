@@ -4,14 +4,9 @@ const studentSection = document.getElementById('student-section');
 const studentNameInput = document.getElementById('student-name');
 const studentList = document.getElementById('student-list');
 
-// Fetch JSON data
-fetch('static/data.json')
-    .then(response => {
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.json(); // Parse the JSON data
-    })
+// Fetch JSON data for dynamic filtering
+fetch('/static/data.json')
+    .then(response => response.json())
     .then(data => {
         const students = data;
 
@@ -39,19 +34,9 @@ fetch('static/data.json')
         console.error('Error loading JSON data:', error);
     });
 
-// Show and hide sections based on filter selection
+// Show/hide sections based on filter selection
 filterDropdown.addEventListener('change', (e) => {
     const value = e.target.value;
-    if (value === 'course') {
-        courseSection.style.display = 'block';
-        studentSection.style.display = 'none';
-    } else if (value === 'student') {
-        courseSection.style.display = 'none';
-        studentSection.style.display = 'block';
-        studentNameInput.style.display = 'block';
-    } else {
-        courseSection.style.display = 'none';
-        studentSection.style.display = 'none';
-        studentNameInput.style.display = 'none';
-    }
+    courseSection.style.display = value === 'course' ? 'block' : 'none';
+    studentSection.style.display = value === 'student' ? 'block' : 'none';
 });

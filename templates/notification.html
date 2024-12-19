@@ -5,42 +5,32 @@
 <div class="admin-upload-container">
   <h1>Notification Posting</h1>
 
-
-  <a  href="{{ url_for('admin_project_upload_page') }}">
-            
-    <button class="back_upload_btn">Post to Everyone</button> <br/> <br/> <br/> <br/> <br/>
-</a>
-
-
-  <label class = "h3" for="filter">Filter by</label>
-  <select id="filter">
-    <option value="">Select Filter</option>
-    <option value="course">Course</option>
-    <option value="student">Student Name</option>
-  </select>
-
-  <br/><br/><br/>
-  <div id="course-section" class="dropdown_filter" style="display: none;">
-    <label class = "h3" for="course">Select Course</label>
-    <select id="course">
-      <option value="">Choose a course</option>
-      <option value="facebook-marketing">Facebook Marketing</option>
-      <option value="instagram-marketing">Instagram Marketing</option>
-      <option value="twitter-marketing">Twitter Marketing</option>
-      <option value="email-marketing">Email Marketing</option>
-    </select>
+      <form id="notificationForm" method="POST" action="{{ url_for('notification_action', form=form) }}">
+          {{ form.hidden_tag() }}
+  
+          <label for="filter">{{ form.filtering.label }}</label>
+          {{ form.filtering(class="form-control", id="filter") }}
+  
+          <br/><br/>
+          <div id="course-section" style="display: none;">
+              <label for="course">{{ form.course.label }}</label>
+              {{ form.course(class="form-control", id="course") }}
+          </div>
+  
+          <div id="student-section" style="display: none;">
+              <label for="student-name">{{ form.student_name.label }}</label>
+              {{ form.student_name(class="form-control", id="student-name") }}
+              <ul class="ul_filter" id="student-list"></ul>
+          </div>
+  
+          <br/><br/>
+          <label for="notification">{{ form.notification.label }}</label>
+          {{ form.notification(class="form-control", id="notification") }}
+  
+          <br/><br/>
+          {{ form.submit(class="btn btn-primary") }}
+      </form>
   </div>
-
-  <div id="student-section" style="display: none;">
-    <label for="student-name">Enter Student Name</label>
-    <input class="input_filter" type="text" id="student-name" placeholder="Type to filter names...">
-    <input class="input_filter" type="text" id="student-name" placeholder="Type to filter names...">
-    <ul class="ul_filter" id="student-list"></ul>
-  </div>
-
-
-  <br/> <br/> <br/> <br/> <br/>
-  <button class="btn" id="post-notification">Post Notification</button>
-</div>
-
+  
+  
   {% endblock %}
