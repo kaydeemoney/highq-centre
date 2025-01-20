@@ -10,14 +10,28 @@ from datetime import datetime, timedelta
 #this is for the validation efficiency of the wtf form you must always include it
 from flask_wtf.csrf import CSRFProtect
 from sqlalchemy.exc import IntegrityError
+import os
+from werkzeug.utils import secure_filename
+from PIL import Image, ImageDraw
 
 app = Flask(__name__, static_folder='static')
 app.config.from_object(Config)
 db = SQLAlchemy(app)
+
+UPLOAD_FOLDER = 'static/uploads'
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+MAX_CONTENT_LENGTH = 300 * 1024  # 300KB
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['MAX_CONTENT_LENGTH'] = MAX_CONTENT_LENGTH
+
+
 #wtf form validation, for form input sending
 csrf = CSRFProtect(app)
 app.config['WTF_CSRF_ENABLED'] = True
-app.config['WTF_CSRF_SECRET_KEY'] = '7caa483b-e1c7-4a65-b901-beae2633e028' 
+app.config['WTF_CSRF_SECRET_KEY'] = '7caa483b-e1c7-4a65-b901-beae2633e028'
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 #model definition for the database
 class student_info(db.Model):
@@ -185,45 +199,74 @@ def twitter_info():
 def email_info():
     return render_template('email_info.html')
 #these are the routes for functions and methods i.e API
-
 @app.route("/student_reg_page", methods=['GET', 'POST'])
 def student_reg_page():
-    joint_id= uuid.uuid4()
-    profile_pic_name=joint_id
-    student_task_id=joint_id
-    student_status="student"
-    student_level="stage_1"
-    date_created= datetime.now()
-    grad_date=date_created + timedelta(days=90)
     form = Student_reg_form()
     if form.validate_on_submit():
-        firstname=form.firstname.data
-        secondname=form.secondname.data
-        surname=form.surname.data
-        course_enrolled=form.course_enrolled.data
-        linkedin_url=form.linkedin_url.data
-        phone=form.phone.data
-        email=form.email.data
-        address=form.address.data
-        password=form.password.data
-        student = student_info(firstname= firstname, secondname=secondname, surname=surname, course_enrolled=course_enrolled,
-        linkedin_url=linkedin_url, phone=phone, email=email, address=address, password=password, profile_pic_name=joint_id,
-        student_status=student_status, student_level=student_level, date_created=date_created, grad_date=grad_date,
-        student_task_id=student_task_id)
-        try:
-            db.session.add(student)
-            db.session.commit()
-            flash(f"Account Created For {{form.surname.data}}", 'success')
-            return redirect(url_for('general_login_page'))
-        except IntegrityError:
-        # Rollback the session in case of an error
-            db.session.rollback()
-            return render_template('student_reg_page.html', title="Student Application", form=form)
-    if not form.validate_on_submit():
-        print(form.errors)
-    return render_template('student_reg_page.html', 
-    title="Student Application", form=form) 
+        # Handle file upload
+        file = request.files.get('file')
+        if file and allowed_file(file.filename):
+            # Process the file
+            joint_id = uuid.uuid4()
+            profile_pic_name = joint_id
+            filename = secure_filename(file.filename)
+            filepath = os.path.join(app.config['UPLOAD_FOLDER'], f"{profile_pic_name}.{filename.rsplit('.', 1)[1]}")
+            file.save(filepath)
 
+            # Image processing: Make the image round (as an example)
+            img = Image.open(filepath)
+            img = img.convert("RGBA")
+            size = (200, 200)  # Set the size of the image
+            img = img.resize(size, Image.Resampling.LANCZOS)  # Correct method for Pillow 10+
+            mask = Image.new("L", size, 0)
+            draw = ImageDraw.Draw(mask)
+            draw.ellipse((0, 0, size[0], size[1]), fill=255)
+            img.putalpha(mask)
+
+            if filename.rsplit('.', 1)[1].lower() in ['jpeg', 'jpg']:
+                img = img.convert("RGB")
+                filepath = os.path.splitext(filepath)[0] + ".jpg"
+                img.save(filepath, "JPEG")
+            else:
+                img.save(filepath, "PNG")
+            
+            # Flash a message for successful profile image upload
+            flash(f'Profile picture uploaded successfully as {filename}', 'success')
+
+            # Save student details in the database
+            student = student_info(
+                firstname=form.firstname.data,
+                secondname=form.secondname.data,
+                surname=form.surname.data,
+                course_enrolled=form.course_enrolled.data,
+                linkedin_url=form.linkedin_url.data,
+                phone=form.phone.data,
+                email=form.email.data,
+                address=form.address.data,
+                password=form.password.data,
+                profile_pic_name=profile_pic_name,
+                student_status="student",
+                student_level="stage_1",
+                date_created=datetime.now(),
+                grad_date=datetime.now() + timedelta(days=90),
+                student_task_id=uuid.uuid4()
+            )
+            
+            try:
+                db.session.add(student)
+                db.session.commit()
+                flash(f"Account created for {form.surname.data}", 'success')
+                return redirect(url_for('general_login_page'))
+            except IntegrityError:
+                db.session.rollback()
+                flash('An error occurred while saving the student details', 'danger')
+                return redirect(request.url)
+
+        else:
+            flash('Invalid file or no file selected', 'danger')
+            return redirect(request.url)
+
+    return render_template('student_reg_page.html', form=form)
 @app.route("/admin_reg_page", methods=['GET', 'POST'])
 def admin_reg_page():
     admin_id= uuid.uuid4()
