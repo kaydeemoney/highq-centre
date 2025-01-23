@@ -229,9 +229,6 @@ def student_reg_page():
                 img.save(filepath, "JPEG")
             else:
                 img.save(filepath, "PNG")
-            
-            # Flash a message for successful profile image upload
-            flash(f'Profile picture uploaded successfully as {filename}', 'success')
 
             # Save student details in the database
             student = student_info(
@@ -249,13 +246,13 @@ def student_reg_page():
                 student_level="stage_1",
                 date_created=datetime.now(),
                 grad_date=datetime.now() + timedelta(days=90),
-                student_task_id=uuid.uuid4()
+                student_task_id=profile_pic_name
             )
             
             try:
                 db.session.add(student)
                 db.session.commit()
-                flash(f"Account created for {form.surname.data}", 'success')
+                flash(f"Account created for {form.surname.data}, click to dismiss this message", 'success')
                 return redirect(url_for('general_login_page'))
             except IntegrityError:
                 db.session.rollback()
@@ -305,6 +302,7 @@ def general_login_page():
         # Check if the email exists in student_info
         if got_student_email:
             full_details = got_student_email
+            pic_id=full_details.student_task_id
             if full_details.password == password:  # Direct password comparison
                 print("going to student")
                 return redirect(url_for('student_dashboard', email=form.email.data))
@@ -333,9 +331,17 @@ def student_dashboard():
     firstname=student_details.firstname
     surname=student_details.surname
     student_status=student_details.student_status
-    print(firstname)
+    pic_id=student_details.student_task_id
+    print(pic_id)
+    uploads_folder = os.path.join(app.static_folder, 'uploads')
+    path_list=os.listdir(uploads_folder)
+    for file_name in path_list:
+        if file_name.startswith(pic_id):
+            profile_picture=file_name
+        else:
+            print("nothing here found")
     return render_template('student_dashboard.html', 
-    firstname=firstname, surname=surname, student_status=student_status)
+    firstname=firstname, surname=surname, student_status=student_status, profile_picture=profile_picture)
 
 @app.route("/admin_dashboard")
 def admin_dashboard():

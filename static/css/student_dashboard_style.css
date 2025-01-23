@@ -154,3 +154,66 @@ footer p, .social-media a {
 .social-media a:hover {
     text-decoration: underline;
 }
+
+
+/* General styles for flash messages container */
+.flash-container {
+    margin: 1em 0;
+    padding: 0;
+}
+
+/* Flash message styles */
+.flash-message {
+    padding: 1em;
+    border-radius: 5px;
+    margin-bottom: 1em;
+    color: #fff;
+    font-family: Arial, sans-serif;
+    font-size: 1rem;
+    position: relative;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Success (green) */
+.flash-message.success {
+    background-color: #28a745;
+}
+
+/* Error/Danger (red) */
+.flash-message.error {
+    background-color: #dc3545;
+}
+
+/* Info (blue) */
+.flash-message.info {
+    background-color: #007bff;
+}
+
+/* Warning (yellow) */
+.flash-message.warning {
+    background-color: #ffc107;
+    color: #333;
+}
+
+/* Close button */
+.flash-message .close-btn {
+    position: absolute;
+    top: 50%;
+    right: 1em;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    font-size: 1rem;
+    font-weight: bold;
+    color: inherit;
+    cursor: pointer;
+}
+
+.profile-img {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin: 0 auto; /* Centers horizontally only */
+    padding: 20px;
+}
