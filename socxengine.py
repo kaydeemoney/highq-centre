@@ -114,7 +114,9 @@ class Student_reg_form(FlaskForm):
     address= StringField('address', validators=[DataRequired(), Length(min=5, max =80)])
     password = PasswordField('password', validators=[DataRequired()])
     confirm_password = PasswordField('Confirm password', validators=[DataRequired(), EqualTo('password')])
-    submit = SubmitField('sign up!')
+    submit = SubmitField('SUBMIT!')
+
+
 class NotificationForm(FlaskForm):
     filtering = SelectField('Filter By',
         choices=[
@@ -338,6 +340,8 @@ def student_dashboard():
     for file_name in path_list:
         if file_name.startswith(pic_id):
             profile_picture=file_name
+            student_details.profile_pic_name=profile_picture
+            db.session.commit()
         else:
             print("nothing here found")
     return render_template('student_dashboard.html', 
@@ -663,6 +667,79 @@ def admin_student_display():
             course_enrolled=course_enrolled, linkedin_url=linkedin_url, phone=phone, address=address, profile_pic_name=profile_pic_name,
             student_status=student_status, student_level=student_level, date_created=date_created, grad_date=grad_date)
             
+
+@app.route('/student_profile_route', methods=['GET', 'POST'])
+def student_profile_route():
+    form = Student_reg_form()
+    email = request.args.get('email')
+    if not email:
+        return "Email is required to view the profile.", 400
+    student_id_details = student_info.query.filter_by(email=email).first()
+    if not student_id_details:
+        return f"No student found with email: {email}", 404
+    firstname = student_id_details.firstname
+    secondname = student_id_details.secondname
+    surname = student_id_details.surname
+    course_enrolled = student_id_details.course_enrolled
+    linkedin_url = student_id_details.linkedin_url
+    phone = student_id_details.phone
+    address = student_id_details.address
+    profile_pic_name = student_id_details.profile_pic_name
+    student_status = student_id_details.student_status
+    student_level = student_id_details.student_level
+    grad_date = student_id_details.grad_date
+    uploads_folder = os.path.join(app.static_folder, 'uploads')
+    for file_name in os.listdir(uploads_folder):
+        if file_name.startswith(profile_pic_name):
+            profile_picture = file_name
+            break
+    if not profile_picture:
+        profile_picture = "default_profile_pic.png"  # Add a fallback image
+    return render_template(
+        'student_profile_page.html',firstname=firstname,secondname=secondname,surname=surname,course_enrolled=course_enrolled,linkedin_url=linkedin_url,
+        phone=phone,email=email,address=address,student_status=student_status,student_level=student_level,grad_date=grad_date,
+        profile_picture=profile_pic_name,form=form)
+
+
+@app.route('/student_profile_saving_action', methods=['GET', 'POST'])
+def student_profile_saving_action():
+    if request.method == 'POST':
+        
+        firstname = request.form.get('firstname')
+        secondname = request.form.get('secondname')
+        surname = request.form.get('surname')
+        course_enrolled = request.form.get('course_enrolled')
+        linkedin_url = request.form.get('linkedin_url')
+        phone = request.form.get('phone')
+        email = request.args.get('email')  # From query params
+        address = request.form.get('address')
+        if not email:
+            return "Email is required to update the profile.", 400
+        student_id_details = student_info.query.filter_by(email=email).first()
+        if not student_id_details:
+            return f"No student found with email: {email}", 404
+        form = Student_reg_form()
+        student_id_details.firstname = firstname
+        student_id_details.secondname = secondname
+        student_id_details.surname = surname
+        student_id_details.course_enrolled = course_enrolled
+        student_id_details.linkedin_url = linkedin_url
+        student_id_details.phone = phone
+        student_id_details.address = address
+        try:
+            db.session.commit()
+            return render_template(
+                'student_profile_page.html',firstname=firstname,secondname=secondname,surname=surname,course_enrolled=course_enrolled,
+                linkedin_url=linkedin_url,phone=phone,email=email,address=address,student_status=student_id_details.student_status,student_level=student_id_details.student_level,
+                grad_date=student_id_details.grad_date,profile_picture=student_id_details.profile_pic_name,
+                form=form
+            )
+        except Exception as e:
+            db.session.rollback()
+            return f"An error occurred: {e}", 500
+
+    return redirect(url_for('general_login_page'))
+
 
    
 if __name__=='__main__':

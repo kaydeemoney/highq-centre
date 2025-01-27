@@ -1,0 +1,87 @@
+{% extends "student_dashboard_base.html" %}
+
+
+{% block content %}
+    <section class="profile-section">
+        <div>
+
+            <img src="{{ url_for('static', filename='uploads/' + profile_picture ) }}" class="profile-img" alt="Profile Picture">
+        </div>
+
+        <div>
+            <h3>Student Email: {{ email }}</h3>
+            <h3>Student Status: {{ student_status }}</h3>
+            <h3>Student Level: {{ student_level }}</h3>
+            <h3>Date of Graduation: {{ grad_date }}</h3>
+
+
+        </div>
+    </section>
+
+   <div>
+        <form method="post" enctype="multipart/form-data", action="{{ url_for('student_profile_saving_action', 
+        email=request.args.get('email') )}}">
+            {{ form.hidden_tag() }}
+           
+    <div>
+        <h1>.</h1>
+    </div>
+
+    <section class="section_center">
+
+            <div class="alerting">
+                <label for="surname">You Can Update Your Profile And Then Click Submit To Make Changes</label>
+            </div>
+            
+            <div class="form-group">
+                <label for="surname">{{ form.surname.label }}</label>
+                {{ form.surname(class="form-control", value=surname) }}
+            </div>
+            
+            <div class="form-group">
+                <label for="firstname">{{ form.firstname.label }}</label>
+                {{ form.firstname(class="form-control", value=firstname) }}
+            </div>
+
+            <div class="form-group">
+                <label for="secondname">{{ form.secondname.label }}</label>
+                {{ form.secondname(class="form-control", value=secondname) }}
+            </div>
+
+            <div class="form-group">
+                <label for="course_enrolled">{{ form.course_enrolled.label }}</label>
+                {{ form.course_enrolled(class="form-control", value=course_enrolled) }}
+            </div>
+
+            <div class="form-group">
+                <label for="linkedin_url">{{ form.linkedin_url.label }}</label>
+                {{ form.linkedin_url(class="form-control", value=linkedin_url) }}
+            </div>
+
+            <div class="form-group">
+                <label for="phone">{{ form.phone.label }}</label>
+                {{ form.phone(class="form-control", value=phone) }}
+            </div>
+
+            
+
+            <div class="form-group">
+                <label for="address">{{ form.address.label }}</label>
+                {{ form.address(class="form-control", value=address) }}
+            </div>
+
+            <div class="form-group">
+                <label for="submit"></label>
+                {{ form.submit(class="btn btn-primary") }}
+            </div>
+        </form>
+    </section>
+   
+    </div>
+
+
+
+
+
+{% endblock %}
+

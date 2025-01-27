@@ -16,6 +16,10 @@
             <p>Current Average Score: <span id="average-score">85%</span></p>
             <p>Status: {{ student_status }}</p>
         </div>
+
+        <a href="{{ url_for('student_profile_route', email=request.args.get('email') ) }}">
+            <button class="btn">See Profile</button>
+        </a>
     </section>
 
     <section class="weekly-scores">
