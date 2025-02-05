@@ -417,3 +417,11 @@ h2 {
     background-color: #f0f0f0;
   }
   
+
+  .centering {
+    text-align: center;
+    background-color: #ecf0f1;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+}

@@ -1,0 +1,44 @@
+
+    {% extends "admin_base.html" %}
+
+    {% block content %}
+
+    <div class="admin-upload-container">
+        <p>Project ID : {{ project_id }}</p>
+        <p>Project Title : {{ project_title }}</p>
+        <p>Project Course : {{ course_enrolled }}</p>
+        <p>Project Deadline : {{ deadline }}</p>
+
+    </div>
+
+    <section class="admin-overview">
+        <h2>Section Upload</h2>
+        <div class="overview-grid">
+            
+            <div class="overview-card">
+                <h3>Admin Actions</h3>
+                <br/>
+                <a href="{{ url_forurl_for('admin_obj', project_id=project_id, title=project_title,
+                course_enrolled=course_enrolled, deadline=deadline) }}">
+                    <button class="btn">Objectives / Multiple Choice</button>
+                </a>
+
+                <a href="{{ url_forurl_for('admin_theory', project_id=project_id, title=project_title,
+                course_enrolled=course_enrolled, deadline=deadline) }}">
+                    <button class="btn">Theory / Essays</button>
+                </a>
+               
+
+                
+            </div>
+
+        </div>
+    </section>
+
+   
+
+    
+
+
+
+     {% endblock %}

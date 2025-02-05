@@ -34,7 +34,7 @@
                
                 
                 <td>
-                    <a href="{{ url_for('admin_student_edit', student_id=each_student.student_task_id, student_list=student_list, course=each_student.course_enrolled ) }}">
+                    <a href="{{ url_for('student_profile_route', email=each_student.email ) }}">
                         <button class="btn">See Complete Info</button>
                     </a>
                 </td>

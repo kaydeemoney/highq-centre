@@ -4,7 +4,34 @@
 
     {% block content %}
         <div class="admin-upload-container">
-            <h1>Project Upload</h1>
+            <h1>Theory Upload</h1>
+
+            <div class="centering">
+
+                <h4> Project Topic: {{ request.args.get('project_title') }} </p>
+                </div>
+               
+        
+                <div class="centering">
+        
+                <a  href="{{ url_for('admin_project_upload_page') }}">
+                    
+                    <button class="back_upload_btn" style="background-color:red;">Back To Upload Page</button>
+                </a>
+        
+                <a  href="{{ url_for('admin_obj', project_id=request.args.get('project_id'), course_enrolled=request.args.get('course_enrolled'),
+                deadline=request.args.get('deadline'), project_title=request.args.get('project_title') ) }}">
+                    
+                    <button class="back_upload_btn" style="background-color: green;">Upload Objective Questions</button>
+                </a>
+        
+                <a  href="{{ url_for('admin_edit_uploaded' ) }}">
+                    <button class="btn" style="background-color: blue;" >Make Edits in Topic</button>
+                </a>
+            
+                </div>
+
+
             <form method="POST" action="">
                 {{ form.hidden_tag() }}
                 

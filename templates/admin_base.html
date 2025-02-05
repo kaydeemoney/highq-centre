@@ -11,11 +11,15 @@
         <div class="logo">LearnSocx Admin</div>
         <nav class="nav">
             <ul>
-                <li><a href="#">Dashboard</a></li>
-                <li><a href="#">Students</a></li>
-                <li><a href="#">Courses</a></li>
-                <li><a href="#">Assignments</a></li>
-                <li><a href="#">Logout</a></li>
+                
+
+                <li> <a href="{{ url_for('admin_dashboard') }}">Home</a></li>
+                <li> <a href="{{ url_for('notification') }}">Post Notifications</a></li>
+                <li> <a href="{{ url_for('admin_edit_uploaded') }}">Mark Projects</a></li>
+                <li> <a href="{{ url_for('admin_project_upload_page') }}">Upload Projects</a></li>
+                <li> <a href="{{ url_for('admin_edit_uploaded') }}">Edit Project</a></li>
+                <li> <a href="{{ url_for('student_dashboard', email=request.args.get('email') ) }}">Manage Student</a></li>
+                <li> <a href="{{ url_for('student_dashboard', email=request.args.get('email') ) }}">Logout</a></li>
             </ul>
         </nav>
     </header>

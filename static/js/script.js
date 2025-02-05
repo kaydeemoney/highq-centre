@@ -40,3 +40,25 @@ filterDropdown.addEventListener('change', (e) => {
     courseSection.style.display = value === 'course' ? 'block' : 'none';
     studentSection.style.display = value === 'student' ? 'block' : 'none';
 });
+
+function addConceptField() {
+    const container = document.getElementById('concepts');
+    const div = document.createElement('div');
+    div.className = 'concept-item';
+    div.innerHTML = `
+        <textarea name="concepts[]" rows="2" required></textarea>
+        <input type="url" name="concept_links[]" placeholder="Link for this concept">
+    `;
+    container.insertBefore(div, container.lastElementChild);
+}
+
+function addResourceField() {
+    const container = document.getElementById('resources');
+    const div = document.createElement('div');
+    div.className = 'resource-item';
+    div.innerHTML = `
+        <textarea name="resources[]" rows="2" required></textarea>
+        <input type="url" name="resource_links[]" placeholder="Link for this resource">
+    `;
+    container.insertBefore(div, container.lastElementChild);
+}

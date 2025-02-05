@@ -19,29 +19,35 @@
             <tr>
                 <th>Title</th>
                 <th>Course</th>
-                <th>Date Created</th>
+                <th>Status</th>
                 <th>Deadline</th>
-                <th>Type</th>
-                <th>Wipe</th>
-                <th>Edit</th>
+                <th> </th>
+                <th></th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
             {% for question in uploaded_project %}
             <tr>
-                <td>{{ question.title }}</td>
+                <td>{{ question.project_title }}</td>
                 <td>{{ question.course_enrolled }}</td>
-                <td>{{ question.date_created[:10] }}</td>
+                <td>{{ question.public }}</td>
                 <td>{{ question.deadline }}</td>
-                <td>{{ question.project_type }}</td>
                 <td>
                    <a href="{{ url_for('admin_edit_current',  project_id=question.project_id) }}">
-                        <button class="btn">Edit</button>
+                        <button class="btn">Open Project</button>
                     </a>
                 </td>
+
+                <td>
+                    <a href="{{ url_for('make_public',  project_id=question.project_id) }}">
+                         <button class="btn">Make Public</button>
+                     </a>
+                 </td>
+
                 <td>
                     <a href="{{ url_for('admin_delete_full', project_id=question.project_id) }}">
-                        <button class="btn">Delete</button>
+                        <button class="btn" style="background-color: red;">Delete</button>
                     </a>
                 </td>
             </tr>

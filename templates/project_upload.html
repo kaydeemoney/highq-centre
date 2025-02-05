@@ -1,0 +1,76 @@
+{% extends "admin_base.html" %}
+
+{% block content %}
+        <div class="container">
+            <h2>Upload Project Materials</h2>
+
+            <form action="/upload" method="POST" enctype="multipart/form-data">
+                <!-- Project Title -->
+                <div class="form-group">
+                    <label for="project-title">Project Title</label>
+                    <textarea id="project-title" name="project_title" rows="2" required></textarea>
+                </div>
+
+                <!-- Keywords -->
+                <div class="form-group">
+                    <label for="keywords">Keywords</label>
+                    <textarea id="keywords" name="keywords" rows="2" required></textarea>
+                </div>
+
+                <!-- Concepts -->
+                <div class="form-group">
+                    <label for="concepts">Concepts</label>
+                    <div id="concepts">
+                        <div class="concept-item">
+                            <textarea name="concepts[]" rows="2" required></textarea>
+                            <input type="url" name="concept_links[]" placeholder="Link for this concept">
+                        </div>
+                        <button type="button" class="btn" onclick="addConceptField()">Add More</button>
+                    </div>
+                </div>
+
+                <!-- Resources to Read and Watch -->
+                <div class="form-group">
+                    <label for="resources">Resources to Read and Watch</label>
+                    <div id="resources">
+                        <div class="resource-item">
+                            <textarea name="resources[]" rows="2" required></textarea>
+                            <input type="url" name="resource_links[]" placeholder="Link for this resource">
+                        </div>
+                        <button type="button" class="btn" onclick="addResourceField()">Add More</button>
+                    </div>
+                </div>
+
+                <!-- Learning Objectives -->
+                <div class="form-group">
+                    <label for="learning-objectives">Learning Objectives</label>
+                    <textarea id="learning-objectives" name="learning_objectives" rows="3" required></textarea>
+                </div>
+
+                <!-- General Requirements -->
+                <div class="form-group">
+                    <label for="general-requirements">General Requirements</label>
+                    <textarea id="general-requirements" name="general_requirements" rows="3" required></textarea>
+                </div>
+
+                <!-- Configuration Files and Setup -->
+                <div class="form-group">
+                    <label for="configuration-setup">Configuration Files and Setup</label>
+                    <textarea id="configuration-setup" name="configuration_setup" rows="3" required></textarea>
+                </div>
+
+                <!-- Multimedia Support -->
+                <div class="form-group">
+                    <label for="multimedia-support">Multimedia Support</label>
+                    <input type="file" id="multimedia-support" name="multimedia_support" accept="image/*,video/*,application/pdf" required>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="form-group">
+                    <button type="submit" class="submit-btn">Upload</button>
+                </div>
+            </form>
+        </div>
+        {% endblock %}
+
+  

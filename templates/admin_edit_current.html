@@ -6,16 +6,28 @@
 
 <div class="admin-upload-container2">
 
+    <div class="centering">
+
     <a  href="{{ url_for('admin_project_upload_page') }}">
             
         <button class="back_upload_btn">Back To Project Upload Menu</button>
     </a>
 
-    <a  href="{{ url_for('admin_obj' , project_id=request.args.get('project_id')) }}">
-        <button class="question_btn">Add More Questions For This Topic</button>
+    <a  href="{{ url_for('add_more_to_present' , project_id=request.args.get('project_id'), project_type='obj') }}">
+        <button style='background-color: blue;' class="back_upload_btn">Add More Objective For This Topic</button>
     </a>
 
-{% for bad_question in project_correct %}
+    <a  href="{{ url_for('add_more_to_present' , project_id=request.args.get('project_id'), project_type='theory') }}">
+        <button style="background-color: blue;" class="back_upload_btn">Add More Theory For This Topic</button>
+    </a>
+
+    </div>
+
+    <div class="centering">
+        <h4>Objective Project Questions</h4>
+    </div>
+
+{% for bad_question in obj_project_correct %}
 
 <div class="admin-upload-container">
     <p class="h3" style="color:blue; margin-bottom:5%;"> {{ bad_question.question }}</p>
@@ -25,6 +37,25 @@
     </a>
         
     <a  href="{{ url_for('admin_delete_single_q' , bad_id=bad_question.id, project_id=request.args.get('project_id')) }}">
+        <button class="btn">Delete</button>
+    </a>
+
+</div>
+{% endfor %}
+<div class="centering">
+<h4>Theory Project Questions</h4>
+</div>
+
+{% for bad_theory in theory_project_correct %}
+
+<div class="admin-upload-container">
+    <p class="h3" style="color:blue; margin-bottom:5%;"> {{ bad_theory.question }}</p>
+    <a  href="{{ url_for('edit_theory', bad_id=bad_theory.id, project_id=request.args.get('project_id')) }}">
+       
+        <button class="btn">Edit</button>
+    </a>
+        
+    <a  href="{{ url_for('delete_theory_question' , bad_id=bad_theory.id, project_id=request.args.get('project_id')) }}">
         <button class="btn">Delete</button>
     </a>
 

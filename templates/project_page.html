@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LearnSocX Landing Page</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/student_styleoptimised.css') }}">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Poppins', sans-serif;
+        }
+        .container {
+            max-width: 900px;
+            margin: 50px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        h1, h2 {
+            color: #007bff;
+            text-align: center;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border: none;
+            padding: 10px 20px;
+            font-size: 18px;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+            display: block;
+            width: 100%;
+            text-align: center;
+            margin-top: 20px;
+            transition: 0.3s;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+        .card {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        .question {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+            resize: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Student Project Task</h1>
+        
+        <div class="card">
+            <h2>Project Overview</h2>
+            <p><strong>Project:</strong> Queuing System in JavaScript</p>
+            <p><strong>Technology Stack:</strong> JavaScript, ES6, Redis, Node.js, ExpressJS</p>
+            <p><strong>Duration:</strong> Dec 2, 2024 - Dec 5, 2024</p>
+            <p><strong>QA Review:</strong> Completed by Edmilson Cassecasse on Dec 5, 2024</p>
+        </div>
+
+        <div class="card">
+            <h2>Objective Questions</h2>
+            <p class="question">1. What command is used to set a key-value pair in Redis?</p>
+            <label><input type="radio" name="q1"> SET</label>
+            <label><input type="radio" name="q1"> GET</label>
+            <label><input type="radio" name="q1"> HSET</label>
+            <label><input type="radio" name="q1"> LPUSH</label>
+        </div>
+
+        <div class="card">
+            <h2>Theory Questions</h2>
+            <p class="question">1. Explain how Redis manages key expiration.</p>
+            <textarea rows="4" placeholder="Write your answer here..."></textarea>
+        </div>
+
+        <div class="card">
+            <h2>Practical Tasks</h2>
+            <p>1. Write a script to connect Node.js to a local Redis instance.</p>
+            <p>2. Implement a function that stores and retrieves hash values using Redis.</p>
+            <p>3. Build a basic Express app integrating Redis for caching.</p>
+        </div>
+
+        <button class="btn-primary">Submit Answers</button>
+    </div>
+</body>
+</html>
