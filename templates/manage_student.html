@@ -1,0 +1,33 @@
+{% extends "admin_base.html" %}
+
+{% block content %}
+
+<div class="admin-upload-container">
+  <h1>Search Student</h1>
+
+      <form id="ManageStudentForm" method="POST" action="{{ url_for('manage_student_action', form=form) }}">
+          {{ form.hidden_tag() }}
+  
+          <label for="filter">{{ form.filtering.label }}</label>
+          {{ form.filtering(class="form-control", id="filter") }}
+  
+          <br/><br/>
+          <div id="course-section" style="display: none;">
+              <label for="course">{{ form.course.label }}</label>
+              {{ form.course(class="form-control", id="course") }}
+          </div>
+  
+          <div id="student-section" style="display: none;">
+              <label for="student-name">{{ form.student_name.label }}</label>
+              {{ form.student_name(class="form-control", id="student-name") }}
+              <ul class="ul_filter" id="student-list"></ul>
+          </div>
+  
+          <br/><br/>
+          
+          {{ form.submit(class="btn btn-primary") }}
+      </form>
+  </div>
+  
+  
+  {% endblock %}

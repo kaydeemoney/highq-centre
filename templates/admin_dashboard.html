@@ -20,21 +20,11 @@
                     <h3>Admin Actions</h3>
                     <br/>
                     <a href="{{ url_for('notification') }}">
-                        <button class="btn">Post Notifications</button>
+                        <button class="btn">Your Activity</button>
                     </a>
 
-                    <P>
-                    <br/>
-                    <a href="{{ url_for('admin_edit_uploaded') }}">
-                        <button class="btn">Mark Unmarked Projects</button>
-                    </a>
-                    </P>
-
-                    <p>
-
-                    <br/>
+                    
                    
-                    </p>
                 </div>
 
 
@@ -60,20 +50,34 @@
             </div>
         </section>
 
+<div>
+        <section class="assignments-management" style="float:left; width:49%; border-radius: 5%;">
+        <form id="quick_search_form" method="POST" action="{{ url_for('student_profile_route') }}">
+            {{ form.hidden_tag() }}
+            <h2>Student Management</h2>
+            
+
+            <div class="centering" id="student-section">
+                <label for="student-name">{{ form.student_name.label }}</label>
+                {{ form.student_name(class="form-control", id="student-name") }}
+                <ul class="ul_filter" id="student-list"></ul>
+            </div>
+
+            {{ form.submit(class="btn btn-primary") }}
+
+        </form>
+    
+        </section>
+    
+
+        <section>
+    <section class="assignments-management" style="width:49%; float:right; border-radius: 5%; border-style: groove;">
        
+            <h2>Course</h2>
 
-
-        <section class="students-management">
-            <h2>Students Management</h2>
+            <b><p>Search By Course</p></b>
+            <br/><br/>
             <table class="students-table">
-                <thead>
-                    <tr>
-                        <th>Course Name</th>
-                        <th>Student Population</th>
-                       
-                        <th>Edit Student Info</th>
-                    </tr>
-                </thead>
                 <tbody>
 
                     <tr>
@@ -123,17 +127,13 @@
                 </tbody>
             </table>
         </section>
+    </div>
 
-        <section class="assignments-management">
-            <h2>Assignments Management</h2>
-            <ul class="assignments-list">
-                <li>Assignment 1: HTML Basics - <span class="due-date">Due: 25th Sept</span></li>
-                <li>Assignment 2: CSS Design - <span class="due-date">Due: 1st Oct</span></li>
-                <!-- Add more assignments as needed -->
-            </ul>
-        </section>
+    </section>
 
-        <section class="courses-management">
+        
+
+        <section style="margin-top:30%;" class="courses-management">
             <h2>Courses Management</h2>
             <ul class="courses-list">
                 <li>HTML & CSS - <span class="status">Active</span></li>

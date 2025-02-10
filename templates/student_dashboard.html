@@ -20,6 +20,12 @@
         <a href="{{ url_for('student_profile_route', email=request.args.get('email') ) }}">
             <button class="btn">See Profile</button>
         </a>
+
+        <br/><br/>
+
+        <a href="{{ url_for('student_project_page', email=request.args.get('email') ) }}">
+            <button class="btn">See project</button>
+        </a>
     </section>
 
     <section class="weekly-scores">

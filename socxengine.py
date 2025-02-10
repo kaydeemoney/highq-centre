@@ -146,6 +146,33 @@ class NotificationForm(FlaskForm):
     notification = TextAreaField('Post Notification', validators=[DataRequired()])
     submit = SubmitField('Post Notification')
 
+
+
+
+class ManageStudentForm(FlaskForm):
+    filtering = SelectField('Filter By',
+        choices=[
+            ('all', 'All Students'),
+            ('course', 'Course'),
+            ('student', 'Student Name')
+            
+        ],
+        validators=[DataRequired()]
+    )
+    course = SelectField(
+        'Select Course',
+        choices=[
+            ('facebook-marketing', 'Facebook Marketing'),
+            ('instagram-marketing', 'Instagram Marketing'),
+            ('twitter-marketing', 'Twitter Marketing'),
+            ('email-marketing', 'Email Marketing')
+        ],
+        validators=[Optional()]  # Optional because it depends on the filter
+    )
+    student_name = StringField('Student Name', validators=[Optional()])
+    
+    submit = SubmitField('Search For Student')
+
 #models definition for admin registration form
 class Admin_reg_form(FlaskForm):
     admin_name= StringField('Full Name', validators=[DataRequired(), Length(min=5, max =50)])
@@ -191,6 +218,10 @@ class general_login_form(FlaskForm):
     email= StringField('email', validators=[DataRequired(), Length(min=5, max =50)])
     password = PasswordField('password', validators=[DataRequired()])
     submit = SubmitField('Login')
+
+class quick_search_form(FlaskForm):
+    student_name= StringField('Enter Student Surname For QuickSearch', validators=[DataRequired(), Length(min=5, max =50)])
+    submit = SubmitField('Search')
 #using a slight flash message to our student forms
 #these are the routes for pages pertaining to the landing page    
 @app.route("/")
@@ -355,11 +386,13 @@ def student_dashboard():
             db.session.commit()
         else:
             print("nothing here found")
+            profile_picture="noname.png"
     return render_template('student_dashboard.html', 
-    firstname=firstname, surname=surname, student_status=student_status, profile_picture=profile_picture)
+    firstname=firstname, surname=surname, student_status=student_status, profile_picture=profile_picture, email=email)
 
 @app.route("/admin_dashboard")
 def admin_dashboard():
+    form=quick_search_form()
     student_no = student_info.query.all()
     fb_no=student_info.query.filter_by(course_enrolled="facebook-marketing").all()
     insta_no=student_info.query.filter_by(course_enrolled="instagram-marketing").all()
@@ -381,7 +414,7 @@ def admin_dashboard():
     for student in twitter_no:
         twitter_count+=1
     return render_template('admin_dashboard.html', headcount=headcount, fb_count=fb_count, insta_count=insta_count, email_count=email_count,
-    twitter_count=twitter_count)
+    twitter_count=twitter_count, form=form)
 
 @app.route("/admin_proj_general_page" , methods=['GET', 'POST'])
 def admin_project_upload_page():
@@ -665,7 +698,9 @@ def notification_action():
                     data= notifications(student_task_id=each_student_id, message=message, status="project", note_type="general", date_created=date_created)
                     db.session.add(data)
                     db.session.commit()
-            return "added for all"
+                flash(f"Notification Added Successfully")
+                return redirect(url_for('admin_dashboard'))
+            
         elif filtering == "student":
             name_filter=student_name.split(" ")
             firstname = name_filter[0]
@@ -684,7 +719,8 @@ def notification_action():
                 data= notifications(student_task_id=each_student_id, message=message, status="project", note_type="general", date_created=date_created)
                 db.session.add(data)
                 db.session.commit()
-            return ("added for " + surname + " " + firstname)
+            flash("added for " + surname + " " + firstname)
+            return redirect(url_for('admin_dashboard'))
         else:
             student_row=student_info.query.filter_by(course_enrolled=course).all()
             for student in student_row:
@@ -700,7 +736,10 @@ def notification_action():
                     data= notifications(student_task_id=each_student_id, message=message, status="project", note_type="general", date_created=date_created)
                     db.session.add(data)
                     db.session.commit()
-            return "posted successfully for " + course
+            
+            flash("posted successfully for " + course )
+            return redirect(url_for('admin_dashboard'))
+            
         return "Notification posted successfully!"
     else:
         return "an error occured"
@@ -752,13 +791,26 @@ def admin_student_display():
 
 @app.route('/student_profile_route', methods=['GET', 'POST'])
 def student_profile_route():
+
+    if request.method == 'POST':
+        student_name=request.form.get('student_name')
+        firstname=student_name.split(" ")[0]
+        surname=student_name.split(" ")[1]
+        exact_match= student_info.query.filter_by(firstname=firstname, surname=surname).first()
+        if exact_match:
+            student_id_details=exact_match
+        else:
+            print("couldnt find this record")
+
+    else:
+        email = request.args.get('email')
+        if not email:
+            return "Email is required to view the profile.", 400
+        student_id_details = student_info.query.filter_by(email=email).first()
+        if not student_id_details:
+            return f"No student found with email: {email}", 404
+    
     form = Student_reg_form()
-    email = request.args.get('email')
-    if not email:
-        return "Email is required to view the profile.", 400
-    student_id_details = student_info.query.filter_by(email=email).first()
-    if not student_id_details:
-        return f"No student found with email: {email}", 404
     firstname = student_id_details.firstname
     secondname = student_id_details.secondname
     surname = student_id_details.surname
@@ -770,6 +822,7 @@ def student_profile_route():
     student_status = student_id_details.student_status
     student_level = student_id_details.student_level
     grad_date = student_id_details.grad_date
+    email=student_id_details.email
     uploads_folder = os.path.join(app.static_folder, 'uploads')
     for file_name in os.listdir(uploads_folder):
         if file_name.startswith(profile_pic_name):
@@ -783,7 +836,7 @@ def student_profile_route():
     return render_template(
         'student_profile_page.html',firstname=firstname,secondname=secondname,surname=surname,course_enrolled=course_enrolled,linkedin_url=linkedin_url,
         phone=phone,email=email,address=address,student_status=student_status,student_level=student_level,grad_date=grad_date,
-        profile_picture=profile_pic_name,form=form)
+        profile_picture=profile_picture,form=form)
 
 
 @app.route('/student_profile_saving_action', methods=['GET', 'POST'])
@@ -838,10 +891,77 @@ def make_public():
     project=project_table.query.filter_by(project_id=project_id).first()
     project.public=1
     db.session.commit()
-    return render_template('admin_edit_uploaded.html')
+
+    uploaded_project=project_table.query.all()
+    return render_template('admin_edit_uploaded.html', uploaded_project=uploaded_project) 
+
+   
 
 
 
+@app.route('/student_project_page', methods=['GET', 'POST'])
+def student_project_page():
+    email = request.args.get('email')
+    student_details=student_info.query.filter_by(email=email).first()
+    course_enrolled=student_details.course_enrolled
+    project_list=project_table.query.filter_by(course_enrolled=course_enrolled).all()
+    return render_template('student_project_page.html', project_list=project_list) 
+
+
+
+
+@app.route('/particular_project_page', methods=['GET', 'POST'])
+def particular_project_page():
+    project_id= request.args.get('project_id')
+    project=project_table.query.filter_by(project_id=project_id).first()
+    project_title=project.project_title
+    project_concept=project.project_concept
+    project_resources=project.project_resources
+    project_requirements=project.project_requirements
+    project_objectives=project.project_objectives
+    particular_obj_set = objective_questions.query.filter_by(project_id=project_id).all()
+    particular_theory_set=theory_questions.query.filter_by(project_id=project_id).all()
+
+    return render_template('particular_project_page.html', project_id=project_id, project=project, project_title=project_title,
+    project_concept=project_concept, project_resources=project_resources, project_requirements=project_requirements,
+    project_objectives=project_objectives, particular_obj_set=particular_obj_set, particular_theory_set=particular_theory_set) 
+
+
+
+
+@app.route("/manage_student", methods=["GET", "POST"])
+def manage_student():
+    # For GET: Populate JSON for student names
+    std_details = student_info.query.all()
+    student_full = [f"{s.firstname} {s.surname}" for s in std_details]
+    with open("static/data.json", "w") as json_file:
+        json.dump(student_full, json_file)
+    return render_template('manage_student.html', form=ManageStudentForm())
+
+@app.route("/manage_student_action", methods=["GET", "POST"])
+def manage_student_action():
+
+    if request.method == 'POST':
+        filtering = request.form.get('filtering')
+        course = request.form.get('course')
+        student_name = request.form.get('student_name')
+        date_created= datetime.now()     
+        if filtering == "student":
+
+            name_filter=student_name.split(" ")
+            firstname = name_filter[0]
+            surname = name_filter[1]
+            student_row = student_info.query.filter(student_info.firstname == firstname,
+            student_info.surname == surname).first()
+            each_student_email = student_row.email
+            return redirect(url_for('student_profile_route' , email=each_student_email ))
+        else:
+            student_row=student_info.query.filter_by(course_enrolled=course).all()
+            
+            return redirect(url_for('admin_student_edit', course=course))
+            
+    return "action successfully!"
+    
 
 if __name__=='__main__':
 	app.run(debug=True)
