@@ -3,60 +3,101 @@
 
 {% block content %}
 
+            <header>
+                <img class="profile-pic" src="{{ url_for('static', filename='uploads/' + profile_picture ) }}" class="profile-img" alt="Profile Picture">
+    
+                <h1>Welcome, {{ firstname }} {{ surname }} </h1>
+
+                <h1>Status : {{ student_status }}</h1>
+            </header>
+
+            <section class="content-grid">
+                <div class="box">
+                    
+                    <h2 style="color:green;">Current Projects</h2>
+                    <br/>
+                     <hr class="gradient-line">
+
+                   
+                    {% for projects in project_list[0:2] %}
+                    <p>Project {{ projects.project_id }}: {{ projects.project_title }}</p>
+                    <br/>
+                    <hr class="gradient-line">
+                    {% endfor %}
+                </div>
+
+                
+
+                <div class="box">
+                    <h2 style="color:green;">Academic Notifications</h2>
+                    <br/>
+                   
+                    <div>
+                    <hr class="gradient-line">
+                    
+                    {% for notifications in notification_by_id[0:2] %}
+                   
+                    <p>Message : {{ notifications.message }}</p>
+
+                    <a href="#" class="view-all">View All</a>
+                   
+                    <span class="date">{{ notifications.date_created }}</span>
+
+                    <br/>
+                    <hr class="gradient-line">
+
+                    
 
 
-    <section class="profile-section">
-        <div>
+                    </div>
+                    
+                    {% endfor %}
 
-            <img src="{{ url_for('static', filename='uploads/' + profile_picture ) }}" class="profile-img" alt="Profile Picture">
-        </div>
-        <div class="profile-info">
-        
-            <h1>{{ firstname }} {{ surname }} </h1>
-            <p>Current Average Score: <span id="average-score">85%</span></p>
-            <p>Status: {{ student_status }}</p>
-        </div>
+                   
 
-        <a href="{{ url_for('student_profile_route', email=request.args.get('email') ) }}">
-            <button class="btn">See Profile</button>
-        </a>
+                </div>
 
-        <br/><br/>
-
-        <a href="{{ url_for('student_project_page', email=request.args.get('email') ) }}">
-            <button class="btn">See project</button>
-        </a>
-    </section>
-
-    <section class="weekly-scores">
-        <h2>Your Performance</h2>
-        <div class="scores-grid">
-            <div class="week">
-                <p>Multiple Choice</p>
-                <p class="score">85%</p>
-            </div>
-            <div class="week">
-                <p>Theory</p>
-                <p class="score">78%</p>
-            </div>
-            <div class="week">
-                <p>Social Media Tasks</p>
-                <p class="score">90%</p>
-            </div>
-            <!-- Add weeks up to Week 12 similarly -->
-        </div>
-    </section>
-
-    <section class="assignments">
-        <h2>Current Projects</h2>
-        <ul>
-            <li>Assignment 1: Due 25th Sept</li>
-            <li>Assignment 2: Due 1st Oct</li>
-        </ul>
-    </section>
+                <div class="box">
+                  
+                    <h4 style="color:green;">General Announcements</h4>
+                    
+                   
 
 
+                    <hr class="gradient-line">
+
+                    {% for notifications in notification_general %}
+
+                    <div>
+                        <hr class="gradient-line">    
+
+                   
+                    {% for message in notifications.message.split('>')[0:2] %}
+
+                    {{ message }}
+                    <a href="#" class="view-all">View All</a>
+                    <span class="date">{{ notifications.date_created }}</span>
+
+                   
+                    <hr class="gradient-line">
+                    </div>
+
+                    
+
+                    {% endfor %}
+                    
+                    {% endfor %}
+
+
+
+                </div>
+
+                <div class="box chart-container2">
+                    
+                    <canvas id="performanceChart"></canvas>
+                </div>
+            </section>
+       
 
 
 {% endblock %}
-

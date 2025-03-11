@@ -4,6 +4,7 @@ from PIL import Image
 from flask_sqlalchemy import SQLAlchemy
 from wtforms import StringField, PasswordField, SubmitField, BooleanField, SelectField, DateField, TextAreaField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, Optional
+
 import uuid, json
 from config import Config
 from datetime import datetime, timedelta
@@ -17,6 +18,9 @@ from PIL import Image, ImageDraw
 app = Flask(__name__, static_folder='static')
 app.config.from_object(Config)
 db = SQLAlchemy(app)
+
+
+
 
 UPLOAD_FOLDER = 'static/uploads'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
@@ -126,6 +130,7 @@ class Student_reg_form(FlaskForm):
 class NotificationForm(FlaskForm):
     filtering = SelectField('Filter By',
         choices=[
+            ('--select from the below options--', '--select from the below options--'),
             ('course', 'Course'),
             ('student', 'Student Name'),
             ('all', 'All Students')
@@ -135,6 +140,7 @@ class NotificationForm(FlaskForm):
     course = SelectField(
         'Select Course',
         choices=[
+            ('select', '--Select Course--'),
             ('facebook-marketing', 'Facebook Marketing'),
             ('instagram-marketing', 'Instagram Marketing'),
             ('twitter-marketing', 'Twitter Marketing'),
@@ -376,19 +382,30 @@ def student_dashboard():
     surname=student_details.surname
     student_status=student_details.student_status
     pic_id=student_details.student_task_id
+    profile_pic_name = student_details.profile_pic_name
+    course_enrolled = student_details.course_enrolled
+    project_list=project_table.query.filter_by(course_enrolled=course_enrolled, public=1).all()
+
+    
+    notification_by_id=notifications.query.filter_by(student_task_id=pic_id).all()
+    notification_general=notifications.query.filter_by(note_type="general").all()
     print(pic_id)
     uploads_folder = os.path.join(app.static_folder, 'uploads')
-    path_list=os.listdir(uploads_folder)
-    for file_name in path_list:
-        if file_name.startswith(pic_id):
-            profile_picture=file_name
-            student_details.profile_pic_name=profile_picture
-            db.session.commit()
+    print(profile_pic_name)
+    for file_name in os.listdir(uploads_folder):
+        if file_name.startswith(profile_pic_name):
+            print("e dey")
+            profile_picture = file_name
+            break
         else:
-            print("nothing here found")
-            profile_picture="noname.png"
+            profile_picture = "noname.png"
+    if not profile_pic_name:
+        profile_picture = "noname.png"  
+    print(profile_picture)
     return render_template('student_dashboard.html', 
-    firstname=firstname, surname=surname, student_status=student_status, profile_picture=profile_picture, email=email)
+    firstname=firstname, surname=surname, student_status=student_status, 
+    profile_picture=profile_picture, email=email, course_enrolled=course_enrolled, project_list=project_list,
+    notification_by_id=notification_by_id, notification_general=notification_general)
 
 @app.route("/admin_dashboard")
 def admin_dashboard():
@@ -682,24 +699,20 @@ def notification_action():
         notification = request.form.get('notification')
         date_created= datetime.now()
         if filtering == "all":
-            all_student = student_info.query.all()
-            for student_id in all_student:
-                each_student_id=student_id.student_task_id
-                present_state = notifications.query.filter_by(student_task_id=each_student_id).first()
-                # we will not need to use session.add whever we are just updating a record, to avoid confusion
-                # and also we wont need to have an instance of the whole code again, just what we wanna correct
-                if present_state:
-                    old_message=present_state.message
-                    message=old_message+">"+notification
-                    present_state.message=message
-                    db.session.commit()
-                else:
-                    message = notification
-                    data= notifications(student_task_id=each_student_id, message=message, status="project", note_type="general", date_created=date_created)
-                    db.session.add(data)
-                    db.session.commit()
-                flash(f"Notification Added Successfully")
-                return redirect(url_for('admin_dashboard'))
+            present_state = notifications.query.filter_by(note_type="general").first()      
+            if present_state:
+                old_message=present_state.message
+                message=old_message+">"+notification
+                present_state.message=message
+                db.session.commit()
+            else:
+                message = notification
+                data= notifications(student_task_id=uuid.uuid4(), message=message, status="project", note_type="general", date_created=date_created)
+                db.session.add(data)
+                db.session.commit()
+                
+            flash(f"Notification Added Successfully")
+            return redirect(url_for('admin_dashboard'))
             
         elif filtering == "student":
             name_filter=student_name.split(" ")
@@ -716,12 +729,14 @@ def notification_action():
                 db.session.commit()
             else:
                 message = notification
-                data= notifications(student_task_id=each_student_id, message=message, status="project", note_type="general", date_created=date_created)
+                data= notifications(student_task_id=each_student_id, message=message, status="project", note_type="student", date_created=date_created)
                 db.session.add(data)
                 db.session.commit()
             flash("added for " + surname + " " + firstname)
             return redirect(url_for('admin_dashboard'))
-        else:
+
+
+        elif filtering == "course":
             student_row=student_info.query.filter_by(course_enrolled=course).all()
             for student in student_row:
                 each_student_id = student.student_task_id
@@ -733,7 +748,7 @@ def notification_action():
                     db.session.commit()
                 else:
                     message = notification
-                    data= notifications(student_task_id=each_student_id, message=message, status="project", note_type="general", date_created=date_created)
+                    data= notifications(student_task_id=each_student_id, message=message, status="project", note_type="course", date_created=date_created)
                     db.session.add(data)
                     db.session.commit()
             
@@ -824,8 +839,10 @@ def student_profile_route():
     grad_date = student_id_details.grad_date
     email=student_id_details.email
     uploads_folder = os.path.join(app.static_folder, 'uploads')
+    print(profile_pic_name)
     for file_name in os.listdir(uploads_folder):
         if file_name.startswith(profile_pic_name):
+            print("e dey")
             profile_picture = file_name
             break
         else:
@@ -834,8 +851,10 @@ def student_profile_route():
         profile_picture = "noname.png"  
     print(profile_picture)
     return render_template(
-        'student_profile_page.html',firstname=firstname,secondname=secondname,surname=surname,course_enrolled=course_enrolled,linkedin_url=linkedin_url,
-        phone=phone,email=email,address=address,student_status=student_status,student_level=student_level,grad_date=grad_date,
+        'student_profile_page.html',firstname=firstname,secondname=secondname,surname=surname,
+        course_enrolled=course_enrolled,linkedin_url=linkedin_url,
+        phone=phone,email=email,address=address,student_status=student_status,
+        student_level=student_level,grad_date=grad_date,
         profile_picture=profile_picture,form=form)
 
 
@@ -895,7 +914,20 @@ def make_public():
     uploaded_project=project_table.query.all()
     return render_template('admin_edit_uploaded.html', uploaded_project=uploaded_project) 
 
-   
+
+
+@app.route('/cease_public', methods=['GET', 'POST'])
+def cease_public():
+    project_id = request.args.get('project_id')
+    project=project_table.query.filter_by(project_id=project_id).first()
+    project.public=2
+    db.session.commit()
+
+    uploaded_project=project_table.query.all()
+    return render_template('admin_edit_uploaded.html', uploaded_project=uploaded_project) 
+
+    
+
 
 
 
@@ -961,7 +993,22 @@ def manage_student_action():
             return redirect(url_for('admin_student_edit', course=course))
             
     return "action successfully!"
-    
+
+
+
+#from here, not necessarily part of the movem ent but essential parts we used for automation
+
+#below automates the changing of dp names to task id names
+@app.route("/rectify_dp")
+def rectify_dp():
+    all_info=student_info.query.all()
+    for each_student in all_info:
+        id_correct=each_student.student_task_id
+        each_student.profile_pic_name=id_correct
+        db.session.commit()
+    return "success"
+
+ 
 
 if __name__=='__main__':
 	app.run(debug=True)

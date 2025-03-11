@@ -35,13 +35,19 @@
                 <td>{{ question.deadline }}</td>
                 <td>
                    <a href="{{ url_for('admin_edit_current',  project_id=question.project_id) }}">
-                        <button class="btn">Open Project</button>
+                        <button class="btn">Open</button>
                     </a>
                 </td>
 
                 <td>
                     <a href="{{ url_for('make_public',  project_id=question.project_id) }}">
-                         <button class="btn">Make Public</button>
+                         <button class="btn">Public</button>
+                     </a>
+                 </td>
+
+                 <td>
+                    <a href="{{ url_for('cease_public',  project_id=question.project_id) }}">
+                         <button class="btn">Roll Back</button>
                      </a>
                  </td>
 

@@ -62,3 +62,36 @@ function addResourceField() {
     `;
     container.insertBefore(div, container.lastElementChild);
 }
+
+
+document.addEventListener("DOMContentLoaded", function () {
+    const ctx = document.getElementById("performanceChart").getContext("2d");
+
+    new Chart(ctx, {
+        type: "line",
+        data: {
+            labels: ["Week 1", "Week 2", "Week 3", "Week 4", "Week 5", "Week 6", "Week 7", "Week 8", "Week 9", "Week 10"],
+            datasets: [
+                {
+                    label: "Performance (%)",
+                    data: [85, 90, 78, 92, 88, 76, 95, 89, 91, 94],
+                    borderColor: "#3498db",
+                    backgroundColor: "rgba(52, 152, 219, 0.2)",
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.4
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 100
+                }
+            }
+        }
+    });
+});

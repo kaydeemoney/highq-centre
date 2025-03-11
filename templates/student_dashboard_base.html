@@ -4,39 +4,58 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Student Dashboard</title>
-        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/student_dashboard_style.css') }}">
+        
+        <!-- Font Awesome CDN -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+        
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/student_dashboard_style.css') }}">
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     </head>
+    
 <body>
-    <header class="header">
-        <div class="logo">LearnSocx</div>
-        <nav class="nav">
-            <ul>
-                <li> <a href="{{ url_for('student_dashboard', email=request.args.get('email') ) }}">Home</a></li>
-                <li><a href="#">Project</a></li>
-                <li><a href="#">Profile</a></li>
-                <li><a href="#">Notifications</a></li>
-                <li><a href="#">Logout</a></li>
-            </ul>
-        </nav>
-    </header>
 
-    <main>
-        {% block content %}
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+           
+            <nav>
+                <ul> 
+                    <li><i class="fas fa-home"></i> <a style="color:white;  text-underline-offset:unset;" href="{{ url_for('student_dashboard', email=request.args.get('email') ) }}">Home</a></li>
+                    <li><i class="fas fa-calendar-alt"></i> My Planning</li>
+                    <li><i class="fas fa-tasks"></i> Projects</li>
+                    <li><i class="fas fa-check-circle"></i> QA Reviews I Can Make</li>
+                    <li><i class="fas fa-question-circle"></i> Evaluation Quizzes</li>
+                    <li><i class="fas fa-book"></i> Curriculums</li>
+                    <li><i class="fas fa-lightbulb"></i> Concepts</li>
+                    <li><i class="fas fa-comments"></i> Conference Rooms</li>
+                    <li><i class="fas fa-server"></i> Servers</li>
+                    <li><i class="fas fa-cube"></i> Sandboxes</li>
+                    <li><i class="fas fa-tools"></i> Tools</li>
+                    <li><i class="fas fa-video"></i> Video on Demand</li>
+                    <li><i class="fas fa-users"></i> Peers</li>
+                    <li><i class="fab fa-discord"></i> Discord</li>
+                </ul>
+            </nav>
+        </aside>
 
-        {% endblock content %}
+        
+        <main class="main-content">
+            
+            {% block content %}
 
-    <!-- things you want to put goes here -->
+            {% endblock content %}
 
-    </main>
+            <!-- things you want to put goes here -->
 
-    <footer>
-        <p>Contact: support@learnsocx.com | Phone: 123-456-7890</p>
-        <div class="social-media">
-            <a href="#">Facebook</a>
-            <a href="#">Twitter</a>
-            <a href="#">Instagram</a>
-        </div>
-    </footer>
+           
+
+
+        </main>
+
+    </div>
+
+   
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+  
 </body>
-
 </html>

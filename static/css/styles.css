@@ -778,3 +778,10 @@ h2 {
     background-color: #f0f0f0;
   }
   
+
+  .gradient-line {
+    border: none;
+    height: 4px;
+    background: linear-gradient(to right, red, blue);
+    width: 100%;
+}
