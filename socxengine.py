@@ -2,9 +2,8 @@ from flask import Flask, Blueprint, render_template, request, redirect, url_for,
 from flask_wtf import FlaskForm
 from PIL import Image
 from flask_sqlalchemy import SQLAlchemy
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, SelectField, DateField, TextAreaField
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, SelectField, DateField, TextAreaField, RadioField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, Optional
-
 import uuid, json
 from config import Config
 from datetime import datetime, timedelta
@@ -18,9 +17,6 @@ from PIL import Image, ImageDraw
 app = Flask(__name__, static_folder='static')
 app.config.from_object(Config)
 db = SQLAlchemy(app)
-
-
-
 
 UPLOAD_FOLDER = 'static/uploads'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
@@ -87,6 +83,8 @@ class theory_questions(db.Model):
     course_enrolled = db.Column(db.String(100), nullable=False)
     deadline = db.Column(db.Date, nullable=False)
     question = db.Column(db.String(500), nullable=False) 
+    question_id = db.Column(db.String(50), nullable=False)
+    next_id = db.Column(db.String(50), nullable=False)
     
 class objective_questions(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -98,7 +96,10 @@ class objective_questions(db.Model):
     opt_b = db.Column(db.String(500), nullable=False)
     opt_c = db.Column(db.String(500), nullable=False)
     opt_d = db.Column(db.String(500), nullable=False)
-    answer = db.Column(db.String(500), nullable=False)  # Assuming answer is one of 'A', 'B', 'C', 'D'
+    answer = db.Column(db.String(500), nullable=False) 
+    question_id = db.Column(db.String(50), nullable=False)
+    next_id = db.Column(db.String(50), nullable=False)
+    # Assuming answer is one of 'A', 'B', 'C', 'D'
 
 class notifications(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -107,6 +108,18 @@ class notifications(db.Model):
     status = db.Column(db.String(10), nullable=False)
     note_type = db.Column(db.String(10), nullable=False)
     date_created = db.Column(db.Date, nullable=False)
+
+
+
+class project_record(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    project_id = db.Column(db.String(50), nullable=False)
+    student_task_id = db.Column(db.String(50), nullable=False)
+    obj_score = db.Column(db.Integer, nullable=True)
+    theory_score = db.Column(db.Integer, nullable=True)
+    task_score = db.Column(db.Integer, nullable=True)
+    overall_score = db.Column(db.Integer, nullable=True)
+    latest_question = db.Column(db.String(50), nullable=False)
     
 #models definition for student registration form
 class Student_reg_form(FlaskForm):
@@ -198,11 +211,11 @@ class ProjectUploadForm(FlaskForm):
         ('email-marketing', 'Email Marketing')],
         validators=[DataRequired()])
     project_title = StringField('Project Title', validators=[DataRequired()])
-    project_keywords = TextAreaField('Include Keywords (....seperate them by commas)', validators=[DataRequired()])
-    project_concept = TextAreaField('Concepts eg Stacks and queues <www.stackoverflow/stacks> (.....seperate each concept by commas)', validators=[DataRequired()])
-    project_resources = TextAreaField('Resources To Watch/Read eg Linked Lists <www.highgrade/linkedlists> (....seperate them by commas)', validators=[DataRequired()])
-    project_objectives = TextAreaField('Learning Objectives (....seperate them by commas)', validators=[DataRequired()])
-    project_requirements = StringField('General Requirements (....seperate them by commas)', validators=[DataRequired()])
+    project_keywords = TextAreaField('Include Keywords (....seperate them by  arrow i.e ->)', validators=[DataRequired()])
+    project_concept = TextAreaField('Concepts eg Stacks and queues <www.stackoverflow/stacks> (.....seperate each concept by  arrow i.e ->)', validators=[DataRequired()])
+    project_resources = TextAreaField('Resources To Watch/Read eg Linked Lists <www.highgrade/linkedlists> (....seperate them by  arrow i.e ->)', validators=[DataRequired()])
+    project_objectives = TextAreaField('Learning Objectives (....seperate them by  arrow i.e ->)', validators=[DataRequired()])
+    project_requirements = StringField('General Requirements (....seperate them by  arrow i.e ->)', validators=[DataRequired()])
     deadline = DateField('Deadline', validators=[DataRequired()])    
     submit_theory = SubmitField('Proceed With Theory')
     submit_obj = SubmitField('Proceed With Objectives')
@@ -228,6 +241,12 @@ class general_login_form(FlaskForm):
 class quick_search_form(FlaskForm):
     student_name= StringField('Enter Student Surname For QuickSearch', validators=[DataRequired(), Length(min=5, max =50)])
     submit = SubmitField('Search')
+
+class obj_question_form(FlaskForm):
+    obj = RadioField('Options', choices=[], validators=[DataRequired()])
+    submit = SubmitField('Submit')
+
+
 #using a slight flash message to our student forms
 #these are the routes for pages pertaining to the landing page    
 @app.route("/")
@@ -405,7 +424,8 @@ def student_dashboard():
     return render_template('student_dashboard.html', 
     firstname=firstname, surname=surname, student_status=student_status, 
     profile_picture=profile_picture, email=email, course_enrolled=course_enrolled, project_list=project_list,
-    notification_by_id=notification_by_id, notification_general=notification_general)
+    notification_by_id=notification_by_id, notification_general=notification_general, student_details=student_details,
+    task_id=pic_id)
 
 @app.route("/admin_dashboard")
 def admin_dashboard():
@@ -476,30 +496,70 @@ def admin_obj():
     project_id=request.args.get('project_id')
     project_title=request.args.get('project_title')
     proj_details=project_table.query.filter_by(project_id=project_id).first()
-    if course_enrolled is None:
-        course_enrolled=proj_details.course_enrolled
-        deadline=proj_details.deadline
-    form = Objupload()
-    #the former form, for we will be needing it at the return
-    default_form = ProjectUploadForm()
-    if form.validate_on_submit():
-        question=form.question.data
-        opt_a=form.opt_a.data
-        opt_b=form.opt_b.data
-        opt_c=form.opt_c.data
-        opt_d=form.opt_d.data
-        answer=form.answer.data
-        objective_question = objective_questions( project_id=project_id, course_enrolled=course_enrolled, deadline=deadline, question=question,
-        opt_a=opt_a, opt_b=opt_b, opt_c=opt_c, opt_d=opt_d, answer=answer)
-        try:
-            db.session.add(objective_question)
+    last_question_list = objective_questions.query.filter_by(project_id=project_id).all()
+
+    if (last_question_list):
+
+        last_question_details=last_question_list[len(last_question_list)-1]
+        if course_enrolled is None:
+            course_enrolled=proj_details.course_enrolled
+            deadline=proj_details.deadline
+        form = Objupload()
+        #the former form, for we will be needing it at the return
+        default_form = ProjectUploadForm()
+        if form.validate_on_submit():
+            question=form.question.data
+            opt_a=form.opt_a.data
+            opt_b=form.opt_b.data
+            opt_c=form.opt_c.data
+            opt_d=form.opt_d.data
+            answer=form.answer.data
+            question_id=uuid.uuid4()
+            last_question_details.next_id=question_id
             db.session.commit()
-            return redirect(url_for('admin_obj', project_id=project_id, course_enrolled=course_enrolled, deadline=deadline, project_title=project_title))
-        except IntegrityError:
-        # Rollback the session in case of an error
-            print("integrity error")
-            db.session.rollback()
-            return render_template('admin_obj.html', form=form)
+            objective_question = objective_questions(question_id=question_id, next_id= "none", project_id=project_id, 
+                                                    course_enrolled=course_enrolled, deadline=deadline, question=question,
+                                                    opt_a=opt_a, opt_b=opt_b, opt_c=opt_c, opt_d=opt_d, answer=answer)
+            
+            try:
+                db.session.add(objective_question)
+                db.session.commit()
+                return redirect(url_for('admin_obj', project_id=project_id, course_enrolled=course_enrolled, deadline=deadline, project_title=project_title))
+            except IntegrityError:
+            # Rollback the session in case of an error
+                print("integrity error")
+                db.session.rollback()
+                return render_template('admin_obj.html', form=form)
+
+    else:
+        if course_enrolled is None:
+            course_enrolled=proj_details.course_enrolled
+            deadline=proj_details.deadline
+        form = Objupload()
+        #the former form, for we will be needing it at the return
+        default_form = ProjectUploadForm()
+        if form.validate_on_submit():
+            question=form.question.data
+            opt_a=form.opt_a.data
+            opt_b=form.opt_b.data
+            opt_c=form.opt_c.data
+            opt_d=form.opt_d.data
+            answer=form.answer.data
+            question_id=uuid.uuid4()
+            objective_question = objective_questions(question_id=question_id, next_id= "none", project_id=project_id, 
+                                                    course_enrolled=course_enrolled, deadline=deadline, question=question,
+                                                    opt_a=opt_a, opt_b=opt_b, opt_c=opt_c, opt_d=opt_d, answer=answer)
+            
+            try:
+                db.session.add(objective_question)
+                db.session.commit()
+                return redirect(url_for('admin_obj', project_id=project_id, course_enrolled=course_enrolled, deadline=deadline, project_title=project_title))
+            except IntegrityError:
+            # Rollback the session in case of an error
+                print("integrity error")
+                db.session.rollback()
+                return render_template('admin_obj.html', form=form)
+            
     if not form.validate_on_submit():
         print(form.errors)
     return render_template('admin_obj.html',  form=form) 
@@ -510,20 +570,45 @@ def admin_theory():
     course_enrolled = request.args.get('course_enrolled')
     deadline = request.args.get('deadline')
     project_title=request.args.get('project_title')
-    form = Theoryupload()
-    if form.validate_on_submit():
-        question=form.question.data
-        theory_question = theory_questions(project_id=project_id, course_enrolled=course_enrolled, deadline=deadline,
-         question=question)
-        try:
-            db.session.add(theory_question)
-            db.session.commit()
-            return redirect(url_for('admin_theory', project_id=project_id, course_enrolled=course_enrolled, deadline=deadline))
-        except IntegrityError:
-        # Rollback the session in case of an error
-            print("integrity error")
-            db.session.rollback()
-            return render_template('admin_theory.html', form=form)
+
+    last_question_list = theory_questions.query.filter_by(project_id=project_id).all()
+
+    if (last_question_list):
+        last_question_details=last_question_list[len(last_question_list)-1]
+        question_id=uuid.uuid4()
+        last_question_details.next_id=question_id
+        db.session.commit()
+        form = Theoryupload()
+        if form.validate_on_submit():
+            question=form.question.data
+            theory_question = theory_questions(question_id=question_id, next_id="none", project_id=project_id, course_enrolled=course_enrolled, deadline=deadline,
+            question=question)
+            try:
+                db.session.add(theory_question)
+                db.session.commit()
+                return redirect(url_for('admin_theory', project_id=project_id, course_enrolled=course_enrolled, deadline=deadline))
+            except IntegrityError:
+            # Rollback the session in case of an error
+                print("integrity error")
+                db.session.rollback()
+                return render_template('admin_theory.html', form=form)
+            
+    else:
+        question_id=uuid.uuid4()
+        form = Theoryupload()
+        if form.validate_on_submit():
+            question=form.question.data
+            theory_question = theory_questions(question_id=question_id, next_id="none", project_id=project_id, course_enrolled=course_enrolled, deadline=deadline,
+            question=question)
+            try:
+                db.session.add(theory_question)
+                db.session.commit()
+                return redirect(url_for('admin_theory', project_id=project_id, course_enrolled=course_enrolled, deadline=deadline))
+            except IntegrityError:
+            # Rollback the session in case of an error
+                print("integrity error")
+                db.session.rollback()
+                return render_template('admin_theory.html', form=form)
     if not form.validate_on_submit():
         print(form.errors)
     return render_template('admin_theory.html',  form=form)
@@ -958,9 +1043,6 @@ def particular_project_page():
     project_concept=project_concept, project_resources=project_resources, project_requirements=project_requirements,
     project_objectives=project_objectives, particular_obj_set=particular_obj_set, particular_theory_set=particular_theory_set) 
 
-
-
-
 @app.route("/manage_student", methods=["GET", "POST"])
 def manage_student():
     # For GET: Populate JSON for student names
@@ -994,11 +1076,105 @@ def manage_student_action():
             
     return "action successfully!"
 
+@app.route('/student_full_project', methods=['GET', 'POST'])
+def student_full_project():
+
+    """project id is the id of that topic
+    task_id is the particular student identity for tasks
+    """
+    project_id= request.args.get('project_id')
+    task_id = request.args.get('task_id')
+    current_project= project_table.query.filter_by(project_id=project_id).first()
+    objective_set=objective_questions.query.filter_by(project_id=project_id).all()
+    theory_set=theory_questions.query.filter_by(project_id=project_id).all()
+    project_exist=project_record.query.filter_by(project_id=project_id, student_task_id=task_id).first()
+    if (project_exist):
+        obj_score=project_exist.obj_score
+        theory_score=project_exist.theory_score
+        task_score=project_exist.task_score
+        overall_score=project_exist.overall_score
+        continue_question=project_exist.latest_question
+        print("project exists")
+    else:
+        obj_score=0
+        theory_score=0
+        task_score=0
+        overall_score = 0
+        continue_question="none"
+        print("project doesnt exist")
+    if continue_question != "none":
+        print("continue question exist")
+        #continue question will be of the format "latest_section(objective or theory)->last_question_id"
+        latest_question=continue_question.split("->")
+        latest_section=latest_question[0]
+        last_question_id=latest_question[1]
+        if (latest_section== "objective"):
+            tracing_next_question_list = objective_questions.query.filter_by(project_id=project_id, question_id=last_question_id)
+            present_question_id = tracing_next_question_list.next_id
+            present_question_details = objective_questions.query.filter_by(question_id=present_question_id).first()
+            
+        elif (latest_section== "theory"):
+            tracing_next_question_list = theory_questions.query.filter_by(project_id=project_id, question_id=last_question_id)
+            present_question_id = tracing_next_question_list.next_id
+            present_question_details = theory_questions.query.filter_by(question_id=present_question_id).first()
+    else:
+        print("continue question doesnt exist")
+        latest_section="objective"
+        current_project_id=project_id
+        present_question_details=objective_questions.query.filter_by(project_id=current_project_id).first()
+        present_question_id=present_question_details.question_id
+        
+    form=obj_question_form()
+    form.obj.choices = [
+        (present_question_details.opt_a, present_question_details.opt_a),
+        (present_question_details.opt_b, present_question_details.opt_b),
+        (present_question_details.opt_c, present_question_details.opt_c),
+        (present_question_details.opt_d, present_question_details.opt_d)
+    ]
+       
+    return render_template('student_full_project.html', project_id=project_id, task_id=task_id,
+                            current_project=current_project, objective_set=objective_set, theory_set=theory_set,
+                             obj_score=obj_score, theory_score=theory_score, task_score=task_score,
+                               overall_score=overall_score,
+                              present_question_details=present_question_details,present_question_id=present_question_id, form=form)
 
 
-#from here, not necessarily part of the movem ent but essential parts we used for automation
+@app.route("/student_question_submit_action", methods=["GET", "POST"])
+def student_question_submit_action():
+    """task_id is student_task_id assigned to student at the project record table once he attempts a project
+        project_id is the id of the project
+        objective set and theory set is a list of every question associated with the project_id
+        present_question_details is a db row of the current question
+        present_question_id is the particular id of the question in the objective or theory table
+    """
 
-#below automates the changing of dp names to task id names
+    project_id=request.args.get('project_id')
+    objective_set=request.args.get('objective_set')
+    task_id=request.args.get('task_id')
+    theory_set=request.args.get('theory_set')
+    obj_score=request.args.get('obj_score'),
+    theory_score=request.args.get('theory_score')
+    task_score=request.args.get('task_score')
+    overall_score=request.args.get('overall_score')
+    present_question_id=request.args.get('present_question_id')
+
+
+    present_question_details=objective_questions.query.filter_by(question_id=present_question_id).first()
+    
+    if request.method == 'POST':
+        answer = request.form.get('obj')
+
+        print (f"the answer is {answer}")
+        print (f"you chose {present_question_details.answer}" )
+
+        if answer == (present_question_details.answer):
+            return "yo got it"
+        else:
+            return "not working"
+            
+    return "action successfully!"
+
+
 @app.route("/rectify_dp")
 def rectify_dp():
     all_info=student_info.query.all()

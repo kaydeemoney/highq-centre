@@ -302,7 +302,7 @@ pre {
 /* Submit Button */
 .submit-btn {
     display: block;
-    width: auto%;
+    width: auto;
     padding: 10px;
     margin-top: 15px;
     background: #2908a1;
@@ -508,4 +508,49 @@ pre {
     float: right; /* Align to the right */
     margin-right: 10px;
     font-style: italic;
+}
+
+
+
+
+.open {
+    font-size: 14px; /* Small text */
+    color: blue;/* Faint but visible */
+    text-decoration: none; /* Remove underline */
+    float: left; /* Align to the left */
+    margin-left: 10px; /* Add spacing from the edge */
+    font-weight: bold; /* Optional: Make it slightly bold */
+    
+    margin-top:10px;
+    margin-bottom:10px;
+}
+
+.open:hover {
+    color: black; /* Darken on hover */
+    text-decoration: underline; /* Add underline on hover */
+}
+
+
+
+.centering {
+    text-align: center;
+    background-color: #ecf0f1;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+}
+
+
+
+.back_upload_btn {
+    background-color: red;
+    color: white;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.back_upload_btn:hover {
+    background-color: #2980b9;
 }

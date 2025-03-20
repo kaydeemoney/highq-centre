@@ -1,0 +1,155 @@
+{% extends "student_dashboard_base.html" %}
+
+
+{% block content %}
+
+
+  <div>
+            <header>
+                <h1> {{ current_project.project_id }} {{ current_project.project_title }}</h1>
+                <div>
+                    {% for keyword in current_project.project_keywords.split("->") %}
+                        <span class="tag"> {{ keyword }} </span>
+                    {% endfor %}
+                
+                </div>
+            </header>
+
+            <!-- Project Details -->
+            <section class="project-details">
+                <div class="info-box">
+                    <p>⚖️ <strong>Weight:</strong> 1</p>
+                    <p>📅 Project over - took place from <strong> {{ current_project.date_created }}</strong> to <strong>{{ current_project.deadline }}</strong></p>
+                    <p>⏳ An auto review will be launched at the deadline.</p>
+                </div>
+            </section>
+
+            <!-- Concepts Section -->
+            <section class="concepts-section">
+                <h2>Concepts and Resources</h2>
+                <p><em>For this project, we expect you to look at these concepts:</em></p>
+                <ul>
+                    {% for concept in current_project.project_concept.split("->") %}
+
+                    <li><a href="#">{{ concept }}</a></li>
+                    {% endfor %}
+
+
+                    {% for resources in current_project.project_resources.split("->") %}
+
+                    <li><a href="#">{{ resources }}</a></li>
+                    {% endfor %}
+                </ul>
+            </section>
+
+            <!-- Image Section -->
+            <div class="image-container">
+                <img src="{{ url_for('static', filename='images/placeholder_logo.png') }}" alt="Learning Objectives">
+            </div>
+
+        </div>
+
+        <div>
+
+            <h2>Learning Objectives</h2>
+            <p>At the end of this project, you are expected to be able to <b>explain to anyone</b>, without the help of Google:</p>
+
+            <ul class="objectives-list">
+
+                {% for objectives in current_project.project_objectives.split("->") %}
+
+                <li> {{ objectives }} </li>
+                {% endfor %}
+
+
+                
+            </ul>
+
+            <br/>
+
+            <h2>Requirements</h2>
+            <ul class="requirements-list">
+                
+
+                {% for requirement in current_project.project_requirements.split("->") %}
+
+                <li> {{ requirement }} </li>
+                {% endfor %}
+            </ul>
+
+            <br/>
+
+            <!--objective questions section-->
+
+            <h2 class="section-title">Objective Question</h2>
+            <div class="centering">
+
+                <a  href="{{ url_for('admin_project_upload_page') }}">
+                    
+                    <button class="back_upload_btn" style="background-color:red;">Objective Questions</button>
+                </a>
+        
+                <a  href="{{ url_for('admin_theory', project_id=request.args.get('project_id'), course_enrolled=request.args.get('course_enrolled'),
+                deadline=request.args.get('deadline'), project_title=request.args.get('project_title') ) }}">
+                    
+                    <button class="back_upload_btn" style="background-color: green;">Theory Questions</button>
+                </a>
+        
+                <a  href="{{ url_for('admin_edit_uploaded' ) }}">
+                    <button class="back_upload_btn" style="background-color: blue;" >Tasks Section</button>
+                </a>
+        
+            
+                </div>
+
+            <p class="section-title">Click Submit to proceed to the next question</p>
+            <div class="question-box">
+                <p class="question-text"><strong>{{ present_question_details.question }}</strong></p>
+                <form class="options" method="POST" action="{{ url_for('student_question_submit_action', 
+    project_id=project_id,
+    objective_set=objective_set,
+    task_id=task_id,
+    theory_set=theory_set,
+    obj_score=obj_score,
+    theory_score=theory_score,
+    task_score=task_score,
+    overall_score=overall_score,
+    present_question_details=present_question_details,
+    present_question_id=present_question_id) }}">
+    
+    {{ form.hidden_tag() }}
+    
+    <div class="options">
+        {% for subfield in form.obj %}
+            <label>{{ subfield }} {{ subfield.label.text }}</label>
+        {% endfor %}
+    </div>
+
+    <button class="submit-btn" type="submit">Submit</button>
+
+</form>
+
+               
+            <br/><br/><br/><br/>
+
+
+            
+            <div>
+                <button class="submit-btn" style="float:left; margin:5%;">Check submission</button>
+                <button class="submit-btn" style="float:right; margin:5%;">➜ Get a sandbox</button>
+            </div>
+        </div>
+    </div>
+
+
+            <div class="chat-button">
+                🔍
+            </div>
+            <div class="chatbot">
+                🤖
+            </div>
+ 
+        </div>
+        
+
+{% endblock %}

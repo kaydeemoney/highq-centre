@@ -1,11 +1,7 @@
 {% extends "student_dashboard_base.html" %}
-
-
 {% block content %}
-
             <header>
                 <img class="profile-pic" src="{{ url_for('static', filename='uploads/' + profile_picture ) }}" class="profile-img" alt="Profile Picture">
-    
                 <h1>Welcome, {{ firstname }} {{ surname }} </h1>
 
                 <h1>Status : {{ student_status }}</h1>
@@ -21,7 +17,14 @@
                    
                     {% for projects in project_list[0:2] %}
                     <p>Project {{ projects.project_id }}: {{ projects.project_title }}</p>
+
+                    <!--task id is the student unique id number  while project_id is the id of that particular topic-->
+
+                    <a href="{{ url_for('student_full_project',  project_id=projects.project_id, task_id=task_id) }}" class="open">Open</a>
+                   
+                    <span class="date"> Due on {{ projects.deadline }}</span>
                     <br/>
+                    
                     <hr class="gradient-line">
                     {% endfor %}
                 </div>
@@ -35,21 +38,25 @@
                     <div>
                     <hr class="gradient-line">
                     
-                    {% for notifications in notification_by_id[0:2] %}
-                   
-                    <p>Message : {{ notifications.message }}</p>
+                    {% for notifications in notification_by_id %}
 
-                    <a href="#" class="view-all">View All</a>
+                    <div>
+                        <hr class="gradient-line">    
+
                    
+                    {% for message in notifications.message.split('>')[0:2] %}
+
+                    {{ message }}
+                    <a href="#" class="view-all">View All</a>
                     <span class="date">{{ notifications.date_created }}</span>
 
-                    <br/>
+                   
                     <hr class="gradient-line">
+                    </div>
 
                     
 
-
-                    </div>
+                    {% endfor %}
                     
                     {% endfor %}
 
