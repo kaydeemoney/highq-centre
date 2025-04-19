@@ -401,7 +401,7 @@ def student_dashboard():
     surname=student_details.surname
     student_status=student_details.student_status
     pic_id=student_details.student_task_id
-    profile_pic_name = student_details.profile_pic_name
+    profile_pic_name = pic_id
     course_enrolled = student_details.course_enrolled
     project_list=project_table.query.filter_by(course_enrolled=course_enrolled, public=1).all()
 
@@ -410,13 +410,18 @@ def student_dashboard():
     notification_general=notifications.query.filter_by(note_type="general").all()
     print(pic_id)
     uploads_folder = os.path.join(app.static_folder, 'uploads')
+
+    """to avoid it being complex, i set the profile pic name to be the pic id and not to be taken from
+    the database, hence rendering the profile pic name column of the database redundant"""
+
     print(profile_pic_name)
     for file_name in os.listdir(uploads_folder):
         if file_name.startswith(profile_pic_name):
-            print("e dey")
+            
             profile_picture = file_name
             break
         else:
+            
             profile_picture = "noname.png"
     if not profile_pic_name:
         profile_picture = "noname.png"  

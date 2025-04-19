@@ -81,36 +81,25 @@ header {
     margin-bottom: 20px;
     color: #2c3e50;
 }
-
 .content-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
     gap: 20px;
+    justify-items: center; /* This centers the boxes */
 }
 
 .box {
-    width: 320px;  /* Fixed width */
-    height: 250px; /* Fixed height */
+    width: 320px;
+    height: 250px;
     background: white;
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
     border: 1px solid #ddd;
-    transition: transform 0.2s;
-    overflow: auto;  /* Enable scrolling */
-}
-
-
-
-.box:hover {
-    transform: translateY(-5px);
-}
-
-.chart-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 300px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    box-sizing: border-box;
+    scrollbar-gutter: stable both-edges; /* Prevents width shift when scrollbar shows */
 }
 
 

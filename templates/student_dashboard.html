@@ -34,69 +34,39 @@
                 <div class="box">
                     <h2 style="color:green;">Academic Notifications</h2>
                     <br/>
-                   
-                    <div>
-                    <hr class="gradient-line">
-                    
-                    {% for notifications in notification_by_id %}
-
-                    <div>
-                        <hr class="gradient-line">    
-
-                   
-                    {% for message in notifications.message.split('>')[0:2] %}
-
-                    {{ message }}
-                    <a href="#" class="view-all">View All</a>
-                    <span class="date">{{ notifications.date_created }}</span>
-
-                   
-                    <hr class="gradient-line">
+                    <hr class="gradient-line" />
+                
+                    <div class="scrollable-content">
+                        {% for notifications in notification_by_id %}
+                        <div>
+                            <hr class="gradient-line" />
+                            {% for message in notifications.message.split('>')[0:2] %}
+                                <p>{{ message }}</p>
+                                <a href="#" class="view-all">View All</a>
+                                <span class="date">{{ notifications.date_created }}</span>
+                                <hr class="gradient-line" />
+                            {% endfor %}
+                        </div>
+                        {% endfor %}
                     </div>
-
-                    
-
-                    {% endfor %}
-                    
-                    {% endfor %}
-
-                   
-
                 </div>
+                
+
 
                 <div class="box">
-                  
                     <h4 style="color:green;">General Announcements</h4>
-                    
-                   
-
-
                     <hr class="gradient-line">
-
                     {% for notifications in notification_general %}
-
                     <div>
                         <hr class="gradient-line">    
-
-                   
                     {% for message in notifications.message.split('>')[0:2] %}
-
                     {{ message }}
                     <a href="#" class="view-all">View All</a>
                     <span class="date">{{ notifications.date_created }}</span>
-
-                   
                     <hr class="gradient-line">
                     </div>
-
-                    
-
                     {% endfor %}
-                    
                     {% endfor %}
-
-
-
                 </div>
 
                 <div class="box chart-container2">
