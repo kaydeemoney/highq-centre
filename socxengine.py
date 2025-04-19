@@ -1175,7 +1175,7 @@ def student_question_submit_action():
         if answer == (present_question_details.answer):
             return "yo got it"
         else:
-            return "not working"
+            return "wrong_answer"
             
     return "action successfully!"
 
