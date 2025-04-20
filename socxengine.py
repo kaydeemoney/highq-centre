@@ -1090,8 +1090,6 @@ def student_full_project():
     project_id= request.args.get('project_id')
     task_id = request.args.get('task_id')
     current_project= project_table.query.filter_by(project_id=project_id).first()
-    objective_set=objective_questions.query.filter_by(project_id=project_id).all()
-    theory_set=theory_questions.query.filter_by(project_id=project_id).all()
     project_exist=project_record.query.filter_by(project_id=project_id, student_task_id=task_id).first()
     if (project_exist):
         obj_score=project_exist.obj_score
@@ -1113,8 +1111,9 @@ def student_full_project():
         latest_question=continue_question.split("->")
         latest_section=latest_question[0]
         last_question_id=latest_question[1]
+        existence_score=1
         if (latest_section== "objective"):
-            tracing_next_question_list = objective_questions.query.filter_by(project_id=project_id, question_id=last_question_id)
+            tracing_next_question_list = objective_questions.query.filter_by(project_id=project_id, question_id=last_question_id).one()
             present_question_id = tracing_next_question_list.next_id
             present_question_details = objective_questions.query.filter_by(question_id=present_question_id).first()
             
@@ -1127,7 +1126,9 @@ def student_full_project():
         latest_section="objective"
         current_project_id=project_id
         present_question_details=objective_questions.query.filter_by(project_id=current_project_id).first()
+        print("the present question details are", present_question_details)
         present_question_id=present_question_details.question_id
+        existence_score=0
         
     form=obj_question_form()
     form.obj.choices = [
@@ -1137,11 +1138,13 @@ def student_full_project():
         (present_question_details.opt_d, present_question_details.opt_d)
     ]
        
-    return render_template('student_full_project.html', project_id=project_id, task_id=task_id,
-                            current_project=current_project, objective_set=objective_set, theory_set=theory_set,
+    return render_template('student_full_project.html', project_id=project_id, 
+                           existence_score=existence_score, task_id=task_id,
+                            current_project=current_project, 
                              obj_score=obj_score, theory_score=theory_score, task_score=task_score,
                                overall_score=overall_score,
-                              present_question_details=present_question_details,present_question_id=present_question_id, form=form)
+                              present_question_details=present_question_details,present_question_id=present_question_id, form=form,
+                              )
 
 
 @app.route("/student_question_submit_action", methods=["GET", "POST"])
@@ -1151,33 +1154,64 @@ def student_question_submit_action():
         objective set and theory set is a list of every question associated with the project_id
         present_question_details is a db row of the current question
         present_question_id is the particular id of the question in the objective or theory table
+        existence score is to decide whether to add or update the project record database to prevent duplication or inexistence of data
     """
-
     project_id=request.args.get('project_id')
-    objective_set=request.args.get('objective_set')
     task_id=request.args.get('task_id')
-    theory_set=request.args.get('theory_set')
-    obj_score=request.args.get('obj_score'),
+    obj_score=request.args.get('obj_score')
     theory_score=request.args.get('theory_score')
     task_score=request.args.get('task_score')
     overall_score=request.args.get('overall_score')
+    existence_score=int(request.args.get('existence_score'))
+
+
     present_question_id=request.args.get('present_question_id')
-
-
     present_question_details=objective_questions.query.filter_by(question_id=present_question_id).first()
     
+    """first of all lets do for objective first , one by one
+    at this stage we will either choose to add to the list or update any current one"""
     if request.method == 'POST':
         answer = request.form.get('obj')
-
+        obj_score=int(obj_score)
         print (f"the answer is {answer}")
         print (f"you chose {present_question_details.answer}" )
+        print(f"the type of your obj score is {type(obj_score)}")
 
         if answer == (present_question_details.answer):
-            return "yo got it"
+            obj_score+=1
+            print("yo got it")
         else:
-            return "wrong_answer"
-            
-    return "action successfully!"
+            obj_score=obj_score
+            print("you got it wrong")
+        latest_question="objective->"+present_question_id
+        project_current_status=project_record(project_id=project_id, student_task_id=task_id, obj_score=obj_score,
+                                              theory_score=theory_score, task_score=task_score, 
+                                              overall_score=overall_score, latest_question=latest_question)
+        if existence_score==0:
+            try:
+                db.session.add(project_current_status)
+                db.session.commit()
+            except IntegrityError:
+            # Rollback the session in case of an error
+                print("integrity error")
+                db.session.rollback()
+                return redirect(url_for('student_full_project', project_id=project_id, task_id=task_id))
+        elif existence_score==1:
+            current_level=project_record.query.filter_by(project_id=project_id, student_task_id=task_id).first()
+            current_level.obj_score=obj_score
+            current_level.theory_score=theory_score
+            current_level.task_score=task_score
+            current_level.overall_score=overall_score
+            current_level.latest_question=latest_question
+            try:
+                db.session.commit()
+            except IntegrityError:
+            # Rollback the session in case of an error
+                print("integrity error")
+                db.session.rollback()
+                return redirect(url_for('student_full_project', project_id=project_id, task_id=task_id))
+    return redirect(url_for('student_full_project', project_id=project_id, task_id=task_id))
+
 
 
 @app.route("/rectify_dp")

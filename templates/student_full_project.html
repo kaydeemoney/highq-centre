@@ -107,15 +107,15 @@
                 <p class="question-text"><strong>{{ present_question_details.question }}</strong></p>
                 <form class="options" method="POST" action="{{ url_for('student_question_submit_action', 
     project_id=project_id,
-    objective_set=objective_set,
+    existence_score=existence_score,
     task_id=task_id,
-    theory_set=theory_set,
     obj_score=obj_score,
     theory_score=theory_score,
     task_score=task_score,
     overall_score=overall_score,
     present_question_details=present_question_details,
-    present_question_id=present_question_id) }}">
+    present_question_id=present_question_id
+    ) }}">
     
     {{ form.hidden_tag() }}
     
